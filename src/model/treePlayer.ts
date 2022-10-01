@@ -8,6 +8,8 @@ import { NodePathfinder } from "./nodePathfinder";
 import { LureConstruction } from "./lureConstruction";
 import { DefensiveConstruction } from "./defensiveConstruction";
 import { OffensiveConstruction } from "./offensiveConstruction";
+import { Peasant } from "./peasant";
+import { DigestivePod } from "./digestivePod";
 
 export class TreePlayer implements Player {
     public get id(): number { return this._id; }
@@ -16,7 +18,7 @@ export class TreePlayer implements Player {
     public get isDead(): boolean { return false; }
 
     private _buildpoints = 3;
-    
+
     public get world(): World { return this._world; }
     private _world: World;
 
@@ -28,9 +30,9 @@ export class TreePlayer implements Player {
         this._world.addPlayer(this);
     }
 
-    public canUpgradeNode(node: Node, type: "lure"|"defensive"|"offensive"): boolean {
+    public canUpgradeNode(node: Node, type: "lure" | "defensive" | "offensive"): boolean {
         const notExists = (
-            !node.construct || 
+            !node.construct ||
             node.construct.canUpgrade(type)
         );
 
@@ -46,19 +48,19 @@ export class TreePlayer implements Player {
 
         return true;
     }
-    
-    public tryUpgradeNode(node: Node, type: "lure"|"defensive"|"offensive"): boolean {
+
+    public tryUpgradeNode(node: Node, type: "lure" | "defensive" | "offensive"): boolean {
         if (!this.canUpgradeNode(node, type)) {
             return false;
         }
 
         if (!node.construct && type === 'lure') {
-            node.construct = new LureConstruction(node, { 
+            node.construct = new LureConstruction(node, {
                 type: "lure",
                 id: node.world.generateId(),
                 level: 1,
                 pods: [],
-                player: this.id 
+                player: this.id
             });
         }
         else if (node.construct) {
@@ -84,23 +86,74 @@ export class TreePlayer implements Player {
         }
         return true;
     }
-    
-    public upgradeNodeRequirements(node: Node, type: "lure"|"defensive"|"offensive"): [] {
+
+    public upgradeNodeRequirements(node: Node, type: "lure" | "defensive" | "offensive"): [] {
         throw new Error("Not yet implemented");
     }
 
     public canActiveTrap(node: Node) {
+        const peasants = this._world.entities.filter(e => e instanceof Peasant) as Peasant[];
+        const trapRange = 64;
+
+        if (node.construct instanceof LureConstruction === false) {
+            return false;
+        }
+
+        for (const p of peasants) {
+            const dx = p.x - node.x;
+            const dy = (p.y - node.y) * 2;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < trapRange) return true;
+        }
+
         return false;
     }
 
     public tryActiveTrap(node: Node) {
-        return false;
+        const peasants = this._world.entities.filter(e => e instanceof Peasant) as Peasant[];
+        // near
+        const withinTrapRange = new Array<Peasant>();
+        const withinAlertRange = new Array<Peasant>();
+
+        if (node.construct instanceof LureConstruction === false) {
+            return false;
+        }
+
+        const trapRange = 64;
+        const alertRange = 128;
+
+        for (const p of peasants) {
+            const dx = p.x - node.x;
+            const dy = (p.y - node.y) * 2;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < alertRange) withinAlertRange.push(p);
+            if (distance < trapRange) withinTrapRange.push(p);
+        }
+
+        const toBeTrapped = withinAlertRange[Math.floor(withinTrapRange.length * Math.random())];
+        for (const t of withinAlertRange) {
+            if (t === toBeTrapped) {
+                continue;
+            }
+            t.alert();
+        }
+        toBeTrapped.destroy();
+
+        if (node.construct instanceof LureConstruction) {
+            node.construct.pods.push(new DigestivePod(node, {
+                age: 0,
+                id: this._world.generateId(),
+                x: Math.random() * 128,
+                y: Math.random() * 64 + 25,
+            }));
+        }
+        return true;
     }
 
     public activateTrapRequirements(node: Node): [] {
         return [];
     }
-    
+
     public interactions(entity: Entity): Array<Interaction> {
         const items = new Array<Interaction>();
         if (entity instanceof Node) {
@@ -160,7 +213,7 @@ export class TreePlayer implements Player {
         }
         throw new Error("Not implemented yet");
     }
-    
+
     public serialize(): PlayerDataTypes {
         return {
             id: this._id,

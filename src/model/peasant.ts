@@ -13,7 +13,8 @@ import { World } from "./world";
 enum PeasantTask {
     Wander,
     Socialize,
-    Forage
+    Forage,
+    Alert
 }
 
 /**
@@ -48,7 +49,8 @@ export class Peasant extends Human {
             if (this._task === PeasantTask.Forage) {
                 task = (n) => nearestNode !== n && (n.construct instanceof LureConstruction || n.construct instanceof TreeConstruct);
             }
-            else if (this._task === PeasantTask.Socialize) {
+            else if (this._task === PeasantTask.Socialize ||
+                     this._task === PeasantTask.Alert) {
                 task = (n) => nearestNode !== n && (n.construct instanceof CityConstruction || n.construct instanceof TownConstruction);
             }
             else {
@@ -91,6 +93,9 @@ export class Peasant extends Human {
                 if (harvestable) {
                     (next.construct as LureConstruction).tryPick();
                 }
+                else if (this._task == PeasantTask.Alert && (next.construct instanceof CityConstruction || next.construct instanceof TownConstruction)) {
+                    this._task = PeasantTask.Wander;
+                }
             }
             else {
                 const speed = 0.1;
@@ -100,6 +105,11 @@ export class Peasant extends Human {
                 this._y += ny * elapsedTime * speed;
             }
         }
+    }
+
+    public alert() {
+        this._task = PeasantTask.Alert;
+        delete this._path;
     }
 
     public serialize(): PeasantData {
