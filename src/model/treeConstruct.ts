@@ -1,8 +1,7 @@
 import { TreeConstructionData } from "../io/dto";
 import { DigestivePod } from "./digestivePod";
 import { Node } from "./node";
-import { Player } from "./player";
-import { PlayerControlled } from "./playerControlled";
+import { NodeConstruction } from "./nodeConstruction";
 import { OnAddEntityCallback } from "./world";
 
 /**
@@ -11,7 +10,7 @@ import { OnAddEntityCallback } from "./world";
 const maxTimeSincePodConsumed = 10 * 1000;
 const witheringTime = 10 * 1000;
 
-export class TreeConstruct extends PlayerControlled {
+export class TreeConstruct extends NodeConstruction {
     public get id() { return this._id; }
     private _id: number;
 

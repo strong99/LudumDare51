@@ -3,7 +3,6 @@ import { Interaction, Player } from "./player";
 import { PlayerDataTypes, TreePlayerData } from "../io/dto";
 import { Entity } from "./entity";
 import { Node } from "./node";
-import { PlayerControlled } from "./playerControlled";
 import { TreeConstruct } from "./treeConstruct";
 import { NodePathfinder } from "./nodePathfinder";
 import { LureConstruction } from "./lureConstruction";
@@ -29,14 +28,12 @@ export class TreePlayer implements Player {
     public canUpgradeNode(node: Node, type: "lure"|"defensive"|"offensive"): boolean {
         const notExists = (
             !node.construct || 
-            node.construct instanceof PlayerControlled === false ||
-            (node.construct as PlayerControlled).player !== this ||
-            (node.construct as PlayerControlled).canUpgrade(type)
+            node.construct.canUpgrade(type)
         );
 
         const isConnected = this._pathfinder.can(
             node,
-            (c, n, v) => n.construct instanceof PlayerControlled && n.construct.player === this ? 1 : null,
+            (c, n, v) => n.construct?.player === this ? 1 : null,
             p => p.construct instanceof TreeConstruct && p.construct.player === this
         );
 
@@ -61,7 +58,7 @@ export class TreePlayer implements Player {
                 player: this.id 
             });
         }
-        else if (node.construct instanceof PlayerControlled) {
+        else if (node.construct) {
             node.construct.tryUpgrade(type);
         }
         else {

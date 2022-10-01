@@ -1,20 +1,28 @@
-import { HumanData } from "../io/dto";
+import { HumanData, HumanDataTypes } from "../io/dto";
 import { Entity } from "./entity";
 import { World } from "./world";
 
-export class Human implements Entity {
+export abstract class Human implements Entity {
     public get id() { return this._id; }
     private _id: number;
 
+    public get x() { return this._x; }
+    protected _x: number;
+
+    public get y() { return this._y; }
+    protected _y: number;
+
+    protected _world: World;
+
     public constructor(world: World, data: HumanData) {
-        throw new Error();
+        this._world = world;
+
+        this._id = data.id;
+        this._x = data.x;
+        this._y = data.y;
     }
 
-    public update(elapsedTime: number): void {
-        throw new Error("Method not implemented.");
-    }
+    public abstract update(elapsedTime: number): void;
 
-    public serialize(): HumanData {
-        throw new Error("Method not implemented.");
-    }
+    public abstract serialize(): HumanDataTypes;
 }

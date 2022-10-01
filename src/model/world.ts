@@ -5,7 +5,6 @@ import { Node } from "./node";
 import { Player } from "./player";
 import * as EntityFactory from "./entityFactory";
 import * as PlayerFactory from "./playerFactory";
-import { PlayerControlled } from "./playerControlled";
 
 export type OnAddEntityCallback = (e: Entity) => void;
 export type OnRemoveEntityCallback = (e: Entity) => void;
@@ -23,7 +22,7 @@ export class World {
 
     public get entities() { return this._entities; }
     public get players() { return this._players; }
-    public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct instanceof PlayerControlled && e.construct.pods.length > 0); }
+    public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct && e.construct.pods.length > 0); }
     public get node() { return this._entities.find(e => e instanceof Node); }
     public get human() { return this._entities.find(e => e instanceof Human); }
 

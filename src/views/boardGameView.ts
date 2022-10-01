@@ -25,8 +25,8 @@ export class BoardGameView implements PlayGameView {
 
     private _dialog?: Entity;
     private _entities = new Array<Entity>();
-    private _minX = -512;
-    private _maxX = 512;
+    private _minX = -786
+    private _maxX = 786;
     private _scrollViewport = 0;
 
     private _onAddEntity: OnAddEntityCallback = e => {
@@ -109,7 +109,7 @@ export class BoardGameView implements PlayGameView {
         if (!this._gameLayer) return;
 
         // Scroll viewport
-        const scrollSpeed = 3;
+        const scrollSpeed = 6;
         if (this._scrollViewport == -1 && -this._gameLayer.x > this._minX) {
             this._gameLayer.x = Math.max(this._minX, this._gameLayer.x + elapsedTime * scrollSpeed);
         }

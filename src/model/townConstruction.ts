@@ -1,40 +1,33 @@
-import { DefensiveConstructionData } from "../io/dto";
+import { TownConstructionData } from "../io/dto";
 import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
+import { UnitSpawn } from "./unitSpawn";
 
-export class DefensiveConstruction extends NodeConstruction {
-    
+export class TownConstruction extends NodeConstruction implements UnitSpawn {
+    public get node() { return this._node; }
     private _node: Node;
 
     public get id() { return this._id; }
     private _id: number;
 
-    public constructor(node: Node, data: DefensiveConstructionData) {
+    public constructor(node: Node, data: TownConstructionData) {
         super();
 
         this._node = node;
         this._node.construct = this;
         this._id = data.id;
-        
+
         const player = this._node.world.players.find(p=>p.id === data.player);
         if (!player) throw new Error(`Player ${data.player} not found for construct`);
         this._player = player;
     }
 
     public canUpgrade(type: string): boolean {
-        return (this.level < 3);
+        return false;
     }
 
     public tryUpgrade(type: string): boolean {
-        if (!this.canUpgrade(type))
-            return false;
-
-        if (this.level < 3) {
-            this._level++;
-        }
-        else throw new Error("Unable to upgrade even though canUpgrade was positive");
-
-        return true;
+        return false;
     }
 
     public upgradeRequirement(type: string): [] | null {
@@ -45,10 +38,10 @@ export class DefensiveConstruction extends NodeConstruction {
         
     }
 
-    public serialize(): DefensiveConstructionData {
+    public serialize(): TownConstructionData {
         return {
             id: this._id,
-            type: "defensive",
+            type: "town",
             level: this.level,
             pods: [],
             player: this._player.id
@@ -56,6 +49,6 @@ export class DefensiveConstruction extends NodeConstruction {
     }
 
     public destroy(): void {
-        throw new Error("Method not implemented.");
-    }   
+        
+    }
 }

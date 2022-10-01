@@ -1,6 +1,7 @@
-export type EntityDataTypes = HumanData | NodeData;
-export type NodeConstructionDataTypes = TreeConstructionData|LureConstructionData|DefensiveConstructionData|OffensiveConstructionData;
-export type PlayerDataTypes = TreePlayerData|KingdomPlayerData;
+export type HumanDataTypes = PeasantData | WarriorData | HeroData;
+export type EntityDataTypes = HumanDataTypes | NodeData;
+export type NodeConstructionDataTypes = TreeConstructionData | LureConstructionData | DefensiveConstructionData | OffensiveConstructionData | TownConstructionData | CityConstructionData;
+export type PlayerDataTypes = TreePlayerData | KingdomPlayerData;
 
 export interface WorldData {
     lastGeneratdId: number;
@@ -17,7 +18,19 @@ export interface EntityData {
 }
 
 export interface HumanData extends EntityData {
-    type: "human";
+
+}
+
+export interface PeasantData extends HumanData {
+    type: "peasant";
+}
+
+export interface WarriorData extends HumanData {
+    type: "warrior";
+}
+
+export interface HeroData extends HumanData {
+    type: "hero";
 }
 
 export interface PlayerData {
@@ -43,7 +56,7 @@ export interface PlayerControlledData extends NodeConstructionData {
 export interface TreeConstructionData extends PlayerControlledData {
     type: "tree";
     timeSincePodConsumed: number;
-    withering: number|false;
+    withering: number | false;
 }
 
 export interface NodeData extends EntityData {
@@ -74,4 +87,12 @@ export interface DefensiveConstructionData extends PlayerControlledData {
 
 export interface OffensiveConstructionData extends PlayerControlledData {
     type: "offensive";
+}
+
+export interface CityConstructionData extends PlayerControlledData {
+    type: "city";
+}
+
+export interface TownConstructionData extends PlayerControlledData {
+    type: "town";
 }

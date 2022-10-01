@@ -1,8 +1,9 @@
 import { EntityData, EntityDataTypes } from "../io/dto";
-import { DigestivePod } from "./digestivePod";
 import { Entity } from "./entity";
-import { Human } from "./human";
+import { Hero } from "./hero";
 import { Node } from "./node";
+import { Peasant } from "./peasant";
+import { Warrior } from "./warrior";
 import { World } from "./world";
 
 /**
@@ -15,8 +16,14 @@ export function Create(world: World, data: EntityData): Entity {
     const typedData = data as EntityDataTypes;
     let createdEntity: Entity|null = null;
 
-    if (typedData.type == "human") {
-        createdEntity = new Human(world, typedData);
+    if (typedData.type == "peasant") {
+        createdEntity = new Peasant(world, typedData);
+    }
+    else if (typedData.type == "warrior") {
+        createdEntity = new Warrior(world, typedData);
+    }
+    else if (typedData.type == "hero") {
+        createdEntity = new Hero(world, typedData);
     }
     else if (typedData.type == "node") {
         createdEntity = new Node(world, typedData);
