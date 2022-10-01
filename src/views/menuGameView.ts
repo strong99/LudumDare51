@@ -1,5 +1,5 @@
 import { Application, Container, DisplayObject, Text } from "pixi.js";
-import { World } from "../logic/world";
+import { World } from "../model/world";
 import { GameView } from "./gameview";
 import { GameViewService } from "./gameViewService";
 import { LoadState } from "./loadState";

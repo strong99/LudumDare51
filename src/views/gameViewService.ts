@@ -1,6 +1,6 @@
 import { Application, Container, Text } from "pixi.js";
 import { SaveManager } from "../io/saveManager";
-import { World } from "../logic/world";
+import { World } from "../model/world";
 import { BoardGameView } from "./boardGameView";
 import { GameView } from "./gameview";
 import { LoadStateListener } from "./loadState";
