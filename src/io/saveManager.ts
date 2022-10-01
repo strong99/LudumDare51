@@ -1,6 +1,4 @@
-import { Application, Container } from "pixi.js";
 import { World } from "../model/world";
-import { PlayGameView } from "../views/boardGameView";
 
 const saveKey = 'ld51:save';
 

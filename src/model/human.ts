@@ -3,8 +3,11 @@ import { Entity } from "./entity";
 import { World } from "./world";
 
 export class Human implements Entity {
-    public constructor(world: World, data: HumanData) {
+    public get id() { return this._id; }
+    private _id: number;
 
+    public constructor(world: World, data: HumanData) {
+        throw new Error();
     }
 
     public update(elapsedTime: number): void {

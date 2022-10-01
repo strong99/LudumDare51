@@ -6,9 +6,16 @@ import { Node } from "./node";
 import { Player } from "./player";
 import * as EntityFactory from "./entityFactory";
 
+export type OnAddEntityCallback = (e: Entity)=>void;
+export type OnRemoveEntityCallback = (e: Entity)=>void;
+
 export class World {
     private _entities = new Array<Entity>();
     private _playTime: number = 0;
+    private _lastGeneratdId: number = 0;
+
+    private _onAddEntityCallbacks = new Array<OnAddEntityCallback>();
+    private _onRemoveEntityCallbacks = new Array<OnRemoveEntityCallback>();
 
     public get playTime() { return this._playTime; }
 
@@ -20,6 +27,7 @@ export class World {
 
     public constructor(data?: WorldData) {
         if (data) {
+            this._lastGeneratdId = data.lastGeneratdId;
             this._playTime = data.playTime;
             for (const e of data.entities) {
                 EntityFactory.Create(this, e);
@@ -41,9 +49,14 @@ export class World {
         }
 
         return {
+            lastGeneratdId: this._lastGeneratdId,
             playTime: this._playTime,
             entities
         };
+    }
+
+    public generateId() {
+        return ++this._lastGeneratdId;
     }
 
     public add(entity: Entity): void {
@@ -62,5 +75,17 @@ export class World {
         }
 
         this._entities.splice(idx, 1);
+    }
+
+    public onAddEntity(onAddEntityCallback: OnAddEntityCallback) {
+        this._onAddEntityCallbacks.push(onAddEntityCallback);
+
+        for(const e of this._entities) {
+            onAddEntityCallback(e);
+        }
+    }
+
+    public onRemoveEntity(onRemoveEntityCallback: OnRemoveEntityCallback) {
+        this._onRemoveEntityCallbacks.push(onRemoveEntityCallback);
     }
 }

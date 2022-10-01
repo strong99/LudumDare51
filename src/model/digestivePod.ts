@@ -3,8 +3,11 @@ import { Entity } from "./entity";
 import { World } from "./world";
 
 export class DigestivePod implements Entity {
-    public constructor(world: World, data: DigestivePodData) {
+    public get id() { return this._id; }
+    private _id: number;
 
+    public constructor(world: World, data: DigestivePodData) {
+        throw new Error();
     }
 
     public update(elapsedTime: number): void {
