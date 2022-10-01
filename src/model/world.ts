@@ -1,4 +1,4 @@
-import { EntityData, WorldData } from "../io/dto";
+import { EntityDataTypes, WorldData } from "../io/dto";
 import { DigestivePod } from "./digestivePod";
 import { Entity } from "./entity";
 import { Human } from "./human";
@@ -12,6 +12,7 @@ export class World {
 
     public get playTime() { return this._playTime; }
 
+    public get entities() { return this._entities; }
     public get player() { return this._entities.find(e => e instanceof Player); }
     public get digistivePods() { return this._entities.find(e => e instanceof DigestivePod); }
     public get node() { return this._entities.find(e => e instanceof Node); }
@@ -19,7 +20,8 @@ export class World {
 
     public constructor(data?: WorldData) {
         if (data) {
-            for(const e of data.entities) {
+            this._playTime = data.playTime;
+            for (const e of data.entities) {
                 EntityFactory.Create(this, e);
             }
         }
@@ -27,15 +29,15 @@ export class World {
 
     public update(elapsedTime: number): void {
         const entities = [...this._entities];
-        for(const e of entities) {
+        for (const e of entities) {
             e.update(elapsedTime);
         }
     }
 
     public serialize(): WorldData {
-        const entities = new Array<EntityData>();
-        for(const e of this._entities) {
-            e.serialize()
+        const entities = new Array<EntityDataTypes>();
+        for (const e of this._entities) {
+            entities.push(e.serialize());
         }
 
         return {
@@ -44,6 +46,21 @@ export class World {
         };
     }
 
-    public add(entity: Entity): void { this._entities.push(entity); }
-    public remove(entity: Entity): void { this._entities.slice(this._entities.indexOf(entity), 1); }
+    public add(entity: Entity): void {
+        const idx = this._entities.indexOf(entity);
+        if (idx >= 0) {
+            throw new Error("Entity alrady exists in this world");
+        }
+
+        this._entities.push(entity);
+    }
+
+    public remove(entity: Entity): void {
+        const idx = this._entities.indexOf(entity);
+        if (idx < 0) {
+            throw new Error("Entity does not exist in this world");
+        }
+
+        this._entities.splice(idx, 1);
+    }
 }

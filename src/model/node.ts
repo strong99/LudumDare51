@@ -4,8 +4,12 @@ import { JSONTypes } from "./json";
 import { World } from "./world";
 
 export class Node implements Entity {
-    public constructor(world: World, data: NodeData) {
+    private _world: World;
 
+    public constructor(world: World, data: NodeData) {
+        this._world = world;
+
+        this._world.add(this);
     }
 
     public update(elapsedTime: number): void {

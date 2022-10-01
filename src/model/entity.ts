@@ -1,6 +1,6 @@
-import { EntityData } from "../io/dto";
+import { EntityDataTypes } from "../io/dto";
 
 export interface Entity {
     update(elapsedTime: number): void;
-    serialize(): EntityData;
+    serialize(): EntityDataTypes;
 }

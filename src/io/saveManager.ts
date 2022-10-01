@@ -9,7 +9,7 @@ export class SaveManager {
         return saveKey in localStorage;
     }
 
-    public loadQuickSave(view: PlayGameView, layer: Container, pixi: Application): World {
+    public loadQuickSave(): World {
         if (!this.hasQuickSave()) {
             throw new Error("Save does not exist");
         }
