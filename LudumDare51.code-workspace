@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"bin": true,
+			"node_modules": true,
+			"obj": true
+		}
+	}
+}

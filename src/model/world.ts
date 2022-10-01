@@ -83,8 +83,9 @@ export class World {
 
         this._entities.push(entity);
          
-        for(const c of this._onAddEntityCallbacks)
+        for(const c of this._onAddEntityCallbacks) {
             c(entity);
+        }
     }
 
     public removeEntity(entity: Entity): void {
@@ -95,8 +96,9 @@ export class World {
 
         this._entities.splice(idx, 1);
 
-        for(const c of this._onRemoveEntityCallbacks)
+        for(const c of this._onRemoveEntityCallbacks) {
             c(entity);
+        }
     }
 
 
