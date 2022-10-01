@@ -68,9 +68,44 @@ export const DemoWorld: WorldData = {
         },
         {
             type: "node",
-            neighbours: [4, 6],
+            neighbours: [4, 6, 11, 12],
             id: 8,
             x: 500,
+            y: 0
+        },
+        {
+            type: "node",
+            neighbours: [8, 13],
+            id: 11,
+            x: 750,
+            y: 100
+        },
+        {
+            type: "node",
+            neighbours: [8, 14],
+            id: 12,
+            x: 750,
+            y: -100
+        },
+        {
+            type: "node",
+            neighbours: [11, 15],
+            id: 13,
+            x: 750,
+            y: 100
+        },
+        {
+            type: "node",
+            neighbours: [12, 15],
+            id: 14,
+            x: 750,
+            y: -100
+        },
+        {
+            type: "node",
+            neighbours: [13, 14],
+            id: 15,
+            x: 1000,
             y: 0
         }
     ],
