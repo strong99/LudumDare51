@@ -23,6 +23,8 @@ export class NodeConnection implements Entity {
             new Point(this._model1.x - center.x, this._model1.y - center.y),
             new Point(this._model2.x - center.x, this._model2.y - center.y),
         ]);
+        this._sprite.zIndex = Math.min(this._model1.y, this._model2.y);
+        
         if (!this._view.gameLayer) throw new Error();
 
         this._view.gameLayer.addChild(this._sprite);

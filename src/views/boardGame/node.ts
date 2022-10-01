@@ -74,6 +74,8 @@ export class Node implements Entity {
             this._nodeConstruction?.destroy();
             this._nodeConstruction = NodeConstructionFactory.TryCreate(this, this._model.construct);
         }
+
+        this._nodeConstruction?.update(timeElapsed);
     }
     
     public destroy(): void {

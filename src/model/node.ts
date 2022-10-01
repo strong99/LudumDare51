@@ -72,7 +72,7 @@ export class Node implements Entity {
     }
 
     public update(elapsedTime: number): void {
-
+        this._construct?.update(elapsedTime);
     }
 
     public serialize(): NodeData {
