@@ -66,7 +66,7 @@ export class BoardGameView implements PlayGameView {
 
     public get selected() { return this._selected; }
     private _selected?: NodeModel;
-    public select(node: NodeModel) {
+    public select(node?: NodeModel) {
         if (node === this._selected) {
             delete this._selected;
         }
@@ -76,7 +76,7 @@ export class BoardGameView implements PlayGameView {
 
         this._dialog?.destroy();
         if (this._selected) {
-            this._dialog = DialogCreatorFactory.TryCreate(this, node);
+            this._dialog = DialogCreatorFactory.TryCreate(this, this._selected);
         }
         else delete this._dialog;
     }

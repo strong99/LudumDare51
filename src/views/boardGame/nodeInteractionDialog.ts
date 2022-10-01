@@ -14,13 +14,14 @@ export class NodeInteractionDialog implements Entity {
         this._view = view;
         this._model = model;
 
-        if (!this._view.viewLayer) {
+        if (!this._view.gameLayer) {
             throw new Error("No layer available");
         }
 
-        this._view.viewLayer.addChild(this._layer);
+        this._view.gameLayer.addChild(this._layer);
         this._layer.x = model.x;
         this._layer.y = model.y;
+        this._layer.zIndex = 9999999;
 
         this._interactions = this._view.player.interactions(model);
         for(let i = 0; i < this._interactions.length; ++i) {
@@ -34,7 +35,10 @@ export class NodeInteractionDialog implements Entity {
                 Math.sin(qi) * 100
             );
             if (interaction.can()) {
-                sprite.on('click', ()=> interaction.do());
+                sprite.on('click', ()=> { 
+                    interaction.do();
+                    this._view.select();
+                });
             }
             else {
                 sprite.alpha = .5;
