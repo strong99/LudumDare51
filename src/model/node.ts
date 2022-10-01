@@ -52,7 +52,7 @@ export class Node implements Entity {
                 }
 
                 if (waitingOnNeighbours.length == 0) {
-                    this._world.onRemoveEntity(listenForNeighbours);
+                    this._world.offAddEntity(listenForNeighbours);
                 }
             };
             this._world.onAddEntity(listenForNeighbours);

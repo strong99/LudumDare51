@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    
     // Settings for the compiler
     "outDir": "./dist/",
     "sourceMap": true,

@@ -3,9 +3,9 @@ import { Entity } from "./entity";
 
 export interface Interaction {
     id: string;
-    can(): void;
-    requirements(): void;
-    do(): void;
+    can(): boolean;
+    requirements(): [];
+    do(): boolean;
 }
 
 export interface Player {

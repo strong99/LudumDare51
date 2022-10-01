@@ -7,8 +7,8 @@ import * as EntityFactory from "./entityFactory";
 import * as PlayerFactory from "./playerFactory";
 import { PlayerControlled } from "./playerControlled";
 
-export type OnAddEntityCallback = (e: Entity)=>void;
-export type OnRemoveEntityCallback = (e: Entity)=>void;
+export type OnAddEntityCallback = (e: Entity) => void;
+export type OnRemoveEntityCallback = (e: Entity) => void;
 
 export class World {
     private _players = new Array<Player>();
@@ -23,7 +23,7 @@ export class World {
 
     public get entities() { return this._entities; }
     public get players() { return this._players; }
-    public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct instanceof PlayerControlled && e.construct.pods.length> 0); }
+    public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct instanceof PlayerControlled && e.construct.pods.length > 0); }
     public get node() { return this._entities.find(e => e instanceof Node); }
     public get human() { return this._entities.find(e => e instanceof Human); }
 
@@ -82,8 +82,8 @@ export class World {
         }
 
         this._entities.push(entity);
-         
-        for(const c of this._onAddEntityCallbacks) {
+
+        for (const c of this._onAddEntityCallbacks) {
             c(entity);
         }
     }
@@ -96,7 +96,7 @@ export class World {
 
         this._entities.splice(idx, 1);
 
-        for(const c of this._onRemoveEntityCallbacks) {
+        for (const c of this._onRemoveEntityCallbacks) {
             c(entity);
         }
     }
@@ -123,7 +123,10 @@ export class World {
     public onAddEntity(onAddEntityCallback: OnAddEntityCallback) {
         this._onAddEntityCallbacks.push(onAddEntityCallback);
 
-        for(const e of this._entities) {
+        for (const e of this._entities) {
+            if (!this._onAddEntityCallbacks.includes(onAddEntityCallback)) {
+                break;
+            }
             onAddEntityCallback(e);
         }
     }

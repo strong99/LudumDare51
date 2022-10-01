@@ -6,9 +6,10 @@ import { PlayGameView } from "./playGameView";
 import * as BoardGameComponentFactory from "./boardGame/boardGameComponentFactory";
 import * as DialogCreatorFactory from "./boardGame/dialogCreatorFactory";
 import { Entity } from "./entity";
-import { Entity as Model } from "../model/entity";
 import { Node as NodeModel } from "../model/node";
 import { NodeConnection } from "./boardGame/nodeConnection";
+import { Player as PlayerModel } from "../model/player";
+import { TreePlayer } from "../model/treePlayer";
 
 export class BoardGameView implements PlayGameView {
     private _service: GameViewService;
@@ -18,6 +19,9 @@ export class BoardGameView implements PlayGameView {
     public get gameLayer() { return this._gameLayer; }
     private _gameLayer?: Container;
     private _viewLayer?: Container;
+
+    public get player(): PlayerModel { return this._player; }
+    private _player: PlayerModel;
 
     private _dialog?: Entity;
     private _entities = new Array<Entity>();
@@ -48,6 +52,7 @@ export class BoardGameView implements PlayGameView {
         this._service = service;
         this._pixi = pixi;
         this._world = world;
+        this._player = this._world.players.find(p=>p instanceof TreePlayer)!;
     }
 
     private _onPointerMove: (this: Window, ev: PointerEvent) => any = e => {
@@ -103,8 +108,9 @@ export class BoardGameView implements PlayGameView {
         }
 
         const entities = [...this._entities];
-        for(const e of entities)
+        for(const e of entities) {
             e.update(elapsedTime);
+        }
     }
 
     public destroy(): void {

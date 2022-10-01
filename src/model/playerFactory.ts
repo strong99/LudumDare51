@@ -1,7 +1,7 @@
 import { PlayerDataTypes, PlayerData } from "../io/dto";
 import { Player } from "./player";
-import { KingdomPlayer } from "./KingdomPlayer";
-import { TreePlayer } from "./TreePlayer";
+import { KingdomPlayer } from "./kingdomPlayer";
+import { TreePlayer } from "./treePlayer";
 import { World } from "./world";
 
 /**

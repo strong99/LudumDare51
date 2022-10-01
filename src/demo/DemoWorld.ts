@@ -33,7 +33,7 @@ export const DemoWorld: WorldData = {
         },
         {
             type: "node",
-            neighbours: [1,7],
+            neighbours: [1, 7],
             id: 3,
             x: -250,
             y: 100
@@ -61,14 +61,14 @@ export const DemoWorld: WorldData = {
         },
         {
             type: "node",
-            neighbours: [3,5],
+            neighbours: [3, 5],
             id: 7,
             x: -500,
             y: 0
         },
         {
             type: "node",
-            neighbours: [4,6],
+            neighbours: [4, 6],
             id: 8,
             x: 500,
             y: 0
