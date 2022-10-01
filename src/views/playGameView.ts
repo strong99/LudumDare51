@@ -1,4 +1,4 @@
-import { GameView } from "./gameview";
+import { GameView } from "./gameView";
 
 export interface PlayGameView extends GameView {
 

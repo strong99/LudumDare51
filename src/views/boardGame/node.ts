@@ -1,4 +1,4 @@
-import { Circle, Container, Ellipse, Sprite, Texture } from 'pixi.js';
+import { Container, Ellipse, Sprite, Texture } from 'pixi.js';
 import { Node as NodeModel } from '../../model/node';
 import { NodeConstruction } from './nodeConstruction';
 import * as NodeConstructionFactory from './nodeConstructionFactory';
@@ -36,7 +36,7 @@ export class Node implements Entity {
         this._view.gameLayer.addChild(this._sprite);
 
         if (this._model.construct) {
-            NodeConstructionFactory.TryCreate(this, this._model.construct);
+            this._nodeConstruction = NodeConstructionFactory.TryCreate(this, this._model.construct);
         }
     }
     
@@ -71,7 +71,7 @@ export class Node implements Entity {
         }
         else if (this._model.construct && (!this._nodeConstruction || !this._nodeConstruction.is(this._model.construct))) {
             this._nodeConstruction?.destroy();
-            NodeConstructionFactory.TryCreate(this, this._model.construct);
+            this._nodeConstruction = NodeConstructionFactory.TryCreate(this, this._model.construct);
         }
     }
     

@@ -2,7 +2,7 @@ import { Application, Container, Text } from "pixi.js";
 import { SaveManager } from "../io/saveManager";
 import { World } from "../model/world";
 import { BoardGameView } from "./boardGameView";
-import { GameView } from "./gameview";
+import { GameView } from "./gameView";
 import { LoadStateListener } from "./loadState";
 import { MenuGameView } from "./menuGameView";
 
@@ -26,7 +26,7 @@ class LoadingGameView {
         const loadingText = new Text("Loading");
         this._container.addChild(loadingText);
 
-        this._listener.registerOnProgress((idx, total, stage)=>{
+        this._listener.registerOnProgress((idx, total, stage) => {
             loadingText.text = `${idx}/${total} - ${stage}`;
         });
 
@@ -38,7 +38,7 @@ class LoadingGameView {
     }
 
     public destroy(): void {
-        this._container.parent?.removeChild(this._container);
+        this._container.destroy();
     }
 }
 
@@ -73,7 +73,7 @@ export class GameViewService {
         const loader = gameView.prepare();
 
         this._loadingView = new LoadingGameView(this._pixi, this, loader);
-        loader.registerOnFinished(()=>{
+        loader.registerOnFinished(() => {
             this._loadingView?.destroy();
             delete this._loadingView;
 

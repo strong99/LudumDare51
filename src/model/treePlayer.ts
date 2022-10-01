@@ -30,7 +30,8 @@ export class TreePlayer implements Player {
         const notExists = (
             !node.construct || 
             node.construct instanceof PlayerControlled === false ||
-            (node.construct as PlayerControlled).player !== this
+            (node.construct as PlayerControlled).player !== this ||
+            (node.construct as PlayerControlled).canUpgrade(type)
         );
 
         const isConnected = this._pathfinder.can(
@@ -51,32 +52,35 @@ export class TreePlayer implements Player {
             return false;
         }
 
-        if (type === "lure") {
-            if (node.construct instanceof LureConstruction) {
-                node.construct.level++;
-            }
-            else {
-                node.construct = new LureConstruction(node, this);
-            }
+        if (!node.construct && type === 'lure') {
+            node.construct = new LureConstruction(node, { 
+                type: "lure",
+                id: node.world.generateId(),
+                level: 1,
+                pods: [],
+                player: this.id 
+            });
         }
-        else if (type === "defensive") {
-            if (node.construct instanceof DefensiveConstruction) {
-                node.construct.level++;
-            }
-            else {
-                node.construct = new DefensiveConstruction(node, this);
-            }
-        }
-        else if (type === "offensive") {
-            if (node.construct instanceof OffensiveConstruction) {
-                node.construct.level++;
-            }
-            else {
-                node.construct = new OffensiveConstruction(node, this);
-            }
+        else if (node.construct instanceof PlayerControlled) {
+            node.construct.tryUpgrade(type);
         }
         else {
-            throw new Error("Not yet implemented");
+            node.construct = (type === "defensive" ?
+                new DefensiveConstruction(node, {
+                    type: "defensive",
+                    id: node.world.generateId(),
+                    level: 1,
+                    pods: [],
+                    player: this.id
+                }) :
+                new OffensiveConstruction(node, {
+                    type: "offensive",
+                    id: node.world.generateId(),
+                    level: 1,
+                    pods: [],
+                    player: this.id
+                })
+            );
         }
         return true;
     }

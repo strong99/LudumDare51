@@ -3,8 +3,7 @@ import { NodeConstruction } from "./nodeConstruction";
 import { Player } from "./player";
 
 export abstract class PlayerControlled extends NodeConstruction {
-    public get level() { return this._level; } 
-    public set level(value) { this._level = value; } 
+    public get level() { return this._level; }
     protected _level = 1;
 
     public get player() { return this._player; } 

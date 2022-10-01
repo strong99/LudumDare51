@@ -10,7 +10,7 @@ export interface Interaction {
 }
 
 export class Node implements Entity {
-    public get id() { return this._id; } 
+    public get id() { return this._id; }
     private _id: number = 0;
 
     public get world() { return this._world; }
@@ -26,12 +26,15 @@ export class Node implements Entity {
     private _y: number;
 
     public get construct() { return this._construct; }
-    public set construct(value) { this._construct?.destroy(); this._construct = value; }
+    public set construct(value) {
+        this._construct?.destroy();
+        this._construct = value;
+    }
     private _construct?: NodeConstruction;
 
     public constructor(world: World, data: NodeData);
     public constructor(world: World, x: number, b: number);
-    public constructor(world: World, a: NodeData|number, b?: number) {
+    public constructor(world: World, a: NodeData | number, b?: number) {
         this._world = world;
 
         if (a && typeof a == 'object') {
@@ -69,14 +72,14 @@ export class Node implements Entity {
     }
 
     public update(elapsedTime: number): void {
-        
+
     }
-    
+
     public serialize(): NodeData {
         return {
             id: this.id,
             type: "node",
-            neighbours: this._neighbours.map(n=>n.id),
+            neighbours: this._neighbours.map(n => n.id),
             construction: this.construct?.serialize(),
             x: this.x,
             y: this.y

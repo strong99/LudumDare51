@@ -1,5 +1,5 @@
 export type EntityDataTypes = HumanData | NodeData;
-export type NodeConstructionDataTypes = TreeConstructionData;
+export type NodeConstructionDataTypes = TreeConstructionData|LureConstructionData|DefensiveConstructionData|OffensiveConstructionData;
 export type PlayerDataTypes = TreePlayerData|KingdomPlayerData;
 
 export interface WorldData {
@@ -62,4 +62,16 @@ export interface DigestivePodData {
 export interface NodeConstructionData {
     id: number;
     type: string;
+}
+
+export interface LureConstructionData extends PlayerControlledData {
+    type: "lure";
+}
+
+export interface DefensiveConstructionData extends PlayerControlledData {
+    type: "defensive";
+}
+
+export interface OffensiveConstructionData extends PlayerControlledData {
+    type: "offensive";
 }

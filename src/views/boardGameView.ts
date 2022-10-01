@@ -1,4 +1,4 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, Loader } from "pixi.js";
 import { OnAddEntityCallback, World } from "../model/world";
 import { GameViewService } from "./gameViewService";
 import { LoadState, LoadStateListener } from "./loadState";
@@ -87,11 +87,21 @@ export class BoardGameView implements PlayGameView {
 
         this._world.onAddEntity(this._onAddEntity);
 
+        const loader = new Loader()
+            .add('tree.png')
+            .add('node.png')
+            .add('lure.png')
+            .add('defensive.png')
+            .add('offensive.png');
+
         // Scroll viewport
         window.addEventListener('pointermove', this._onPointerMove);
 
-        var loadState = new LoadState();
-        loadState.onFinished();
+        const loadState = new LoadState();
+        let i = 0;
+        loader.onProgress.add((l, r)=>loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
+        loader.onComplete.add(()=>loadState.onFinished());
+        loader.load();
         return loadState;
     }
 

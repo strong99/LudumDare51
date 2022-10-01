@@ -1,7 +1,7 @@
 import { Application, Container, Text } from "pixi.js";
 import { DemoWorld } from "../demo/DemoWorld";
 import { World } from "../model/world";
-import { GameView } from "./gameview";
+import { GameView } from "./gameView";
 import { GameViewService } from "./gameViewService";
 import { LoadState } from "./loadState";
 
