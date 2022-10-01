@@ -4,6 +4,7 @@ import { NodeConstruction } from "./nodeConstruction";
 
 export class DefensiveConstruction extends NodeConstruction {
     
+    public get node(): Node { return this._node; }
     private _node: Node;
 
     public get id() { return this._id; }

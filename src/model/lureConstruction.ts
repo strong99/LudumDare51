@@ -7,6 +7,7 @@ import { OffensiveConstruction } from "./offensiveConstruction";
 const maxTimeFruitGrowth = 10 * 1000;
 
 export class LureConstruction extends NodeConstruction {
+    public get node(): Node { return this._node; }
     private _node: Node;
 
     public get id() { return this._id; }

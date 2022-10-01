@@ -14,8 +14,9 @@ export class DefensiveConstruction implements NodeConstruction {
         this._model = model;
 
         this._sprite = new Sprite(Texture.from('defensive.png'));
-        this._sprite.y = 0;
+        this._sprite.position.set(model.node.x, model.node.y);
         this._sprite.anchor.set(0.5, 0.9);
+        this._sprite.zIndex = this._sprite.position.y + 1000;
 
         if (!this._node.gameLayer) throw new Error();
 

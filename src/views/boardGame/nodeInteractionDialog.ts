@@ -14,11 +14,11 @@ export class NodeInteractionDialog implements Entity {
         this._view = view;
         this._model = model;
 
-        if (!this._view.gameLayer) {
+        if (!this._view.viewLayer) {
             throw new Error("No layer available");
         }
 
-        this._view.gameLayer.addChild(this._layer);
+        this._view.viewLayer.addChild(this._layer);
         this._layer.x = model.x;
         this._layer.y = model.y;
 

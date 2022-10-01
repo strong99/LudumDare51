@@ -16,6 +16,8 @@ export class TreeConstruct extends NodeConstruction {
     private _id: number;
 
     public get world() { return this._node.world; }
+    
+    public get node(): Node { return this._node; }
     private _node: Node;
 
     private _withering: number | false = false;

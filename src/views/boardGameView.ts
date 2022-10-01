@@ -1,4 +1,4 @@
-import { Application, Container, Loader } from "pixi.js";
+import { Application, Container, Loader, Sprite } from "pixi.js";
 import { OnAddEntityCallback, World } from "../model/world";
 import { GameViewService } from "./gameViewService";
 import { LoadState, LoadStateListener } from "./loadState";
@@ -18,12 +18,15 @@ export class BoardGameView implements PlayGameView {
 
     public get gameLayer() { return this._gameLayer; }
     private _gameLayer?: Container;
+    
+    public get viewLayer() { return this._viewLayer; }
     private _viewLayer?: Container;
 
     public get player(): PlayerModel { return this._player; }
     private _player: PlayerModel;
 
     private _dialog?: Entity;
+    private _surface?: Sprite;
     private _entities = new Array<Entity>();
     private _minX = -786
     private _maxX = 786;
@@ -92,7 +95,8 @@ export class BoardGameView implements PlayGameView {
             .add('node.png')
             .add('lure.png')
             .add('defensive.png')
-            .add('offensive.png');
+            .add('offensive.png')
+            .add('surface.png');
 
         // Scroll viewport
         window.addEventListener('pointermove', this._onPointerMove);
@@ -100,7 +104,14 @@ export class BoardGameView implements PlayGameView {
         const loadState = new LoadState();
         let i = 0;
         loader.onProgress.add((l, r)=>loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
-        loader.onComplete.add(()=>loadState.onFinished());
+        loader.onComplete.add((r)=> {
+            this._surface = new Sprite(r.resources['surface.png'].texture);
+            this._surface.anchor.set(0.5, 0.5);
+            this._surface.zIndex = this._surface.position.y - this._surface.anchor.y * this._surface.texture.height;
+            this._gameLayer?.addChild(this._surface);
+
+            loadState.onFinished()
+        });
         loader.load();
         return loadState;
     }
@@ -123,6 +134,8 @@ export class BoardGameView implements PlayGameView {
         for(const e of entities) {
             e.update(elapsedTime);
         }
+
+        this._gameLayer.children.sort((a,b)=>a.zIndex-b.zIndex);
     }
 
     public destroy(): void {

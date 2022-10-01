@@ -9,7 +9,7 @@ export class Node implements Entity {
     private _view: BoardGameView;
     private _model: NodeModel;
 
-    public get gameLayer() { return this._sprite; }
+    public get gameLayer() { return this._view.gameLayer; }
     private _sprite: Sprite;
 
     private _nodeConstruction?: NodeConstruction;
@@ -30,6 +30,7 @@ export class Node implements Entity {
         this._sprite.on('pointerover', ()=>this.startHover());
         this._sprite.on('pointerout', ()=>this.endHover());
         this._sprite.on('click', ()=>this._view.select(model));
+        this._sprite.zIndex = this._sprite.position.y;
 
         if (!this._view.gameLayer)throw new Error();
 

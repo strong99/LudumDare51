@@ -25,6 +25,7 @@ export class Warrior implements Entity {
 
     public update(timeElapsed: number): void {
         this._sprite.position.set(this._model.x, this._model.y);
+        this._sprite.zIndex = this._sprite.position.y + 1000;
     }
     
     public destroy(): void {
