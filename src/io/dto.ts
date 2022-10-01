@@ -1,7 +1,12 @@
+export type EntityDataTypes = HumanData | NodeData;
+export type NodeConstructionDataTypes = TreeConstructionData;
+export type PlayerDataTypes = TreePlayerData|KingdomPlayerData;
+
 export interface WorldData {
     lastGeneratdId: number;
     playTime: number;
     entities: Array<EntityDataTypes>;
+    players: Array<PlayerDataTypes>;
 }
 
 export interface EntityData {
@@ -11,19 +16,34 @@ export interface EntityData {
     y: number;
 }
 
-export type EntityDataTypes = HumanData | NodeData;
-export type NodeConstructionDataTypes = PlayerConstructionData;
-
 export interface HumanData extends EntityData {
     type: "human";
 }
 
-export interface PlayerConstructionData extends NodeConstructionData {
-    type: "player";
+export interface PlayerData {
+    id: number;
+    type: string;
+}
+
+export interface TreePlayerData extends PlayerData {
+    type: "tree";
+    buildPoints: number;
+}
+
+export interface KingdomPlayerData extends PlayerData {
+    type: "kingdom";
+}
+
+export interface PlayerControlledData extends NodeConstructionData {
     pods: Array<number>;
+    player: number;
+    level: number;
+}
+
+export interface TreeConstructionData extends PlayerControlledData {
+    type: "tree";
     timeSincePodConsumed: number;
     withering: number|false;
-    buildPoints: number;
 }
 
 export interface NodeData extends EntityData {

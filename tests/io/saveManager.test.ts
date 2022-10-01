@@ -1,3 +1,4 @@
+import { WorldData } from '../../src/io/dto';
 import { SaveManager } from '../../src/io/saveManager';
 import { World } from '../../src/model/world';
 
@@ -24,8 +25,10 @@ it('hasNoQuickSave', ()=>{
 it('doLoadExistingQuickSave', ()=>{
     localStorage[saveKey] = JSON.stringify({
         playTime: 453,
+        lastGeneratdId: 2,
+        players: [],
         entities: []
-    });
+    } as WorldData);
 
     const saveManager = new SaveManager();
     const result = saveManager.loadQuickSave();

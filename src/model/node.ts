@@ -4,6 +4,11 @@ import { NodeConstruction } from "./nodeConstruction";
 import * as NodeConstructionFactory from "./nodeConstructionFactory";
 import { OnAddEntityCallback, World } from "./world";
 
+export interface Interaction {
+    readonly id: string;
+    do(): void;
+}
+
 export class Node implements Entity {
     public get id() { return this._id; } 
     private _id: number = 0;
@@ -60,11 +65,11 @@ export class Node implements Entity {
             this._x = a;
             this._y = b;
         }
-        this._world.add(this);
+        this._world.addEntity(this);
     }
 
     public update(elapsedTime: number): void {
-        throw new Error("Method not implemented.");
+        
     }
     
     public serialize(): NodeData {

@@ -1,14 +1,14 @@
 import { Sprite, Texture } from 'pixi.js';
-import { Player as PlayerModel } from '../../model/player';
+import { TreeConstruct as TreeModel } from '../../model/treeConstruct';
 import { Node } from './node';
 import { NodeConstruction } from './nodeConstruction';
 
-export class Player implements NodeConstruction {
+export class Tree implements NodeConstruction {
     private _node: Node;
-    private _model: PlayerModel;
+    private _model: TreeModel;
     private _sprite: Sprite;
 
-    public constructor(node: Node, model: PlayerModel) {
+    public constructor(node: Node, model: TreeModel) {
         this._node = node;
         this._model = model;
 
