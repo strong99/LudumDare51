@@ -1,15 +1,18 @@
-import { EntityDataTypes, PlayerDataTypes, WorldData } from "../io/dto";
+import { AgentDataTypes, EntityDataTypes, PlayerDataTypes, WorldData } from "../io/dto";
 import { Entity } from "./entity";
 import { Human } from "./human";
 import { Node } from "./node";
 import { Player } from "./player";
 import * as EntityFactory from "./entityFactory";
 import * as PlayerFactory from "./playerFactory";
+import * as AgentFactory from "./agentFactory";
+import { Agent } from "./agent";
 
 export type OnAddEntityCallback = (e: Entity) => void;
 export type OnRemoveEntityCallback = (e: Entity) => void;
 
 export class World {
+    private _agents = new Array<Agent>();
     private _players = new Array<Player>();
     private _entities = new Array<Entity>();
     private _playTime: number = 0;
@@ -20,7 +23,9 @@ export class World {
 
     public get playTime() { return this._playTime; }
 
-    public get entities() { return this._entities; }
+    public get agents(): ReadonlyArray<Agent> { return this._agents; }
+    public get entities(): ReadonlyArray<Entity> { return this._entities; }
+    public get nodes(): ReadonlyArray<Node> { return this._entities.filter(e=>e instanceof Node) as Array<Node>; }
     public get players() { return this._players; }
     public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct && e.construct.pods.length > 0); }
     public get node() { return this._entities.find(e => e instanceof Node); }
@@ -36,7 +41,28 @@ export class World {
             for (const e of data.entities) {
                 EntityFactory.Create(this, e);
             }
+            for (const a of data.agents) {
+                AgentFactory.Create(this, a);
+            }
         }
+    }
+
+    public getNearestNode(x: number, y: number): Node {
+        let nearestDistance = Number.MAX_SAFE_INTEGER;
+        let nearestNode: Node|null = null;
+        for(const n of this.nodes) {
+            const dx = n.x - x;
+            const dy = n.y - y;
+            const distance = Math.sqrt(dx*dx+dy*dy);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestNode = n;
+            }
+        }
+        if (!nearestNode) {
+            throw new Error("Worlds require nodes");
+        }
+        return nearestNode;
     }
 
     public update(elapsedTime: number): void {
@@ -48,6 +74,11 @@ export class World {
         const entities = [...this._entities];
         for (const e of entities) {
             e.update(elapsedTime);
+        }
+
+        const agents = [...this._agents];
+        for (const a of agents) {
+            a.update(elapsedTime);
         }
     }
 
@@ -62,11 +93,17 @@ export class World {
             players.push(p.serialize());
         }
 
+        const agents = new Array<AgentDataTypes>();
+        for (const p of this._agents) {
+            agents.push(p.serialize());
+        }
+
         return {
             lastGeneratdId: this._lastGeneratdId,
             playTime: this._playTime,
             entities,
-            players
+            players,
+            agents
         };
     }
 
@@ -106,7 +143,7 @@ export class World {
     public addPlayer(player: Player): void {
         const idx = this._players.indexOf(player);
         if (idx >= 0) {
-            throw new Error("Entity alrady exists in this world");
+            throw new Error("Player already exists in this world");
         }
 
         this._players.push(player);
@@ -115,10 +152,29 @@ export class World {
     public removePlayer(player: Player): void {
         const idx = this._players.indexOf(player);
         if (idx < 0) {
-            throw new Error("Entity does not exist in this world");
+            throw new Error("Player does not exist in this world");
         }
 
         this._players.splice(idx, 1);
+    }
+
+
+    public addAgent(agent: Agent): void {
+        const idx = this._agents.indexOf(agent);
+        if (idx >= 0) {
+            throw new Error("Agent already exists in this world");
+        }
+
+        this._agents.push(agent);
+    }
+
+    public removeAgent(agent: Agent): void {
+        const idx = this._agents.indexOf(agent);
+        if (idx < 0) {
+            throw new Error("Agent does not exist in this world");
+        }
+
+        this._agents.splice(idx, 1);
     }
 
     public onAddEntity(onAddEntityCallback: OnAddEntityCallback) {

@@ -26,7 +26,7 @@ export class NodePathfinder {
                 if (endNode(c)) {
                     goals.push(c);
                 }
-                goalSearchSet.push(...c.neighbours.filter(p=>!goalSearchSet.includes(p)));
+                goalSearchSet.push(...c.neighbours.filter(p => !goalSearchSet.includes(p)));
             }
         }
 
@@ -39,7 +39,7 @@ export class NodePathfinder {
             //var lowestFscore = fScore.Where(p => openSet.Contains(p.Key)).Min(p => p.Value);
             //var current = openSet.First(i => fScore[i] == lowestFscore);
             const current = this.cheapest(fScore, openSet);
-            if (endNode(current)) {
+            if (goals.includes(current)) {
                 return this.reconstructPath(cameFrom, current);
             }
 
@@ -84,12 +84,12 @@ export class NodePathfinder {
 
     protected goalDistanceCost(start: Node, goals: Array<Node>): number {
         // nearest score
-        let lowestScore = Number.MAX_VALUE;
-        for(const goal of goals) {
+        let lowestScore = 0;
+        for (const goal of goals) {
             const dx = start.x - goal.x;
             const dy = (start.y - goal.y) / 2;
-            const length = Math.sqrt(dx*dx+dy*dy);
-            if (lowestScore > length) {
+            const length = Math.sqrt(dx * dx + dy * dy);
+            if (lowestScore + Math.random() > length) {
                 lowestScore = length;
             }
         }
@@ -99,7 +99,7 @@ export class NodePathfinder {
     protected neighbourDistanceCost(start: Node, neighbour: Node): number {
         const dx = start.x - neighbour.x;
         const dy = (start.y - neighbour.y) / 2;
-        return Math.sqrt(dx*dx+dy*dy);
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     private cheapest(fScore: { [key: number]: number }, openSet: Array<Node>): Node {
@@ -107,7 +107,7 @@ export class NodePathfinder {
         let cheapestFScore = Number.MAX_VALUE;
         for (const node of openSet) {
             const score = fScore[node.id];
-            if (cheapestFScore > score) {
+            if (cheapestFScore >= score) {
                 cheapestNode = node;
                 cheapestFScore = score;
             }

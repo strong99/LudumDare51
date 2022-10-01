@@ -4,11 +4,18 @@ import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
 import { OffensiveConstruction } from "./offensiveConstruction";
 
+const maxTimeFruitGrowth = 10 * 1000;
+
 export class LureConstruction extends NodeConstruction {
     private _node: Node;
 
     public get id() { return this._id; }
     private _id: number;
+
+    public get fruits(): number { return this._fruits; }
+    private _fruits: number = 4;
+
+    private _fruitsSpawnInterval: number = 0;
 
     public constructor(node: Node, data: LureConstructionData) {
         super();
@@ -60,8 +67,21 @@ export class LureConstruction extends NodeConstruction {
         throw new Error("Method not implemented.");
     }
     
-    public update(timeElapsed: number): void {
-        
+    public update(elapsedTime: number): void {
+        this._fruitsSpawnInterval -= elapsedTime;
+        if (this._fruitsSpawnInterval < 0) {
+            this._fruitsSpawnInterval += maxTimeFruitGrowth;
+            if (this._fruits < 10) this._fruits++;
+        }
+    }
+
+    public tryPick(): boolean {
+        if (this._fruits < 0) {
+            return false;
+        }
+
+        this._fruits--;
+        return true;
     }
 
     public serialize(): LureConstructionData {

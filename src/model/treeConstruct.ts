@@ -8,6 +8,7 @@ import { OnAddEntityCallback } from "./world";
  * LD51 theme value: 10 seconds
  */
 const maxTimeSincePodConsumed = 10 * 1000;
+const maxTimeFruitGrowth = 10 * 1000;
 const witheringTime = 10 * 1000;
 
 export class TreeConstruct extends NodeConstruction {
@@ -18,6 +19,11 @@ export class TreeConstruct extends NodeConstruction {
     private _node: Node;
 
     private _withering: number | false = false;
+
+    public get fruits(): number { return this._fruits; }
+    private _fruits: number = 4;
+
+    private _fruitsSpawnInterval: number = 0;
 
     public get hasDied() { return this._withering !== false; }
     public get willDie() { return this.timeToConsumePod < 0 && this._pods.length == 0; }
@@ -56,6 +62,15 @@ export class TreeConstruct extends NodeConstruction {
         this._player = player;
     }
 
+    public tryPick(): boolean {
+        if (this._fruits < 0) {
+            return false;
+        }
+
+        this._fruits--;
+        return true;
+    }
+
     public update(elapsedTime: number): void {
         this._timeSincePodConsumed += elapsedTime;
         if (this.hasDied) {
@@ -63,6 +78,12 @@ export class TreeConstruct extends NodeConstruction {
         }
         else if (this.shouldConsume) {
             this.tryConsume();
+        }
+
+        this._fruitsSpawnInterval -= elapsedTime;
+        if (this._fruitsSpawnInterval < 0) {
+            this._fruitsSpawnInterval += maxTimeFruitGrowth;
+            if (this._fruits < 20) this._fruits++;
         }
     }
 

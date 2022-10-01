@@ -2,12 +2,14 @@ export type HumanDataTypes = PeasantData | WarriorData | HeroData;
 export type EntityDataTypes = HumanDataTypes | NodeData;
 export type NodeConstructionDataTypes = TreeConstructionData | LureConstructionData | DefensiveConstructionData | OffensiveConstructionData | TownConstructionData | CityConstructionData;
 export type PlayerDataTypes = TreePlayerData | KingdomPlayerData;
+export type AgentDataTypes = HumanComputerAgentData;
 
 export interface WorldData {
     lastGeneratdId: number;
     playTime: number;
     entities: Array<EntityDataTypes>;
     players: Array<PlayerDataTypes>;
+    agents: Array<AgentDataTypes>;
 }
 
 export interface EntityData {
@@ -95,4 +97,13 @@ export interface CityConstructionData extends PlayerControlledData {
 
 export interface TownConstructionData extends PlayerControlledData {
     type: "town";
+}
+
+export interface AgentData {
+    type: string;
+    player: number;
+}
+
+export interface HumanComputerAgentData extends AgentData {
+    type: "humanComputer";
 }

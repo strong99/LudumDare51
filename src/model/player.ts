@@ -1,5 +1,6 @@
 import { PlayerDataTypes } from "../io/dto";
 import { Entity } from "./entity";
+import { World } from "./world";
 
 export interface Interaction {
     id: string;
@@ -10,6 +11,7 @@ export interface Interaction {
 
 export interface Player {
     readonly id: number;
+    readonly world: World;
     
     readonly isDead: boolean;
     

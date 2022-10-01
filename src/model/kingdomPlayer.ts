@@ -14,6 +14,7 @@ export class KingdomPlayer implements Player {
 
     public get isDead(): boolean { return false; }
 
+    public get world(): World { return this._world; }
     private _world: World;
 
     public constructor(world: World, data?: KingdomPlayerData) {

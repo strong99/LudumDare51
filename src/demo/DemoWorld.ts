@@ -3,6 +3,12 @@ import { WorldData } from "../io/dto";
 export const DemoWorld: WorldData = {
     playTime: 0,
     lastGeneratdId: 10,
+    agents: [
+        {
+            player: 10,
+            type: "humanComputer"
+        }
+    ],
     players: [
         {
             id: 9,

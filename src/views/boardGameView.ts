@@ -108,8 +108,10 @@ export class BoardGameView implements PlayGameView {
     public update(elapsedTime: number): void {
         if (!this._gameLayer) return;
 
+        this._world?.update(elapsedTime);
+
         // Scroll viewport
-        const scrollSpeed = 6;
+        const scrollSpeed = 2;
         if (this._scrollViewport == -1 && -this._gameLayer.x > this._minX) {
             this._gameLayer.x = Math.max(this._minX, this._gameLayer.x + elapsedTime * scrollSpeed);
         }

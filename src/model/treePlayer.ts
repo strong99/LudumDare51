@@ -16,7 +16,10 @@ export class TreePlayer implements Player {
     public get isDead(): boolean { return false; }
 
     private _buildpoints = 3;
+    
+    public get world(): World { return this._world; }
     private _world: World;
+
     private _pathfinder = new NodePathfinder();
 
     public constructor(world: World, data: TreePlayerData) {

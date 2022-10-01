@@ -20,9 +20,17 @@ export abstract class Human implements Entity {
         this._id = data.id;
         this._x = data.x;
         this._y = data.y;
+        
+        this._world.addEntity(this);
     }
 
     public abstract update(elapsedTime: number): void;
 
     public abstract serialize(): HumanDataTypes;
+
+    public destroy() {
+        if (this._world.entities.includes(this)) {
+            this._world?.removeEntity(this);
+        }
+    }
 }
