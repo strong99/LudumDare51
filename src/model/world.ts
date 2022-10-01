@@ -5,6 +5,7 @@ import { Human } from "./human";
 import { Node } from "./node";
 import { Player } from "./player";
 import * as EntityFactory from "./entityFactory";
+import { PlayerControlled } from "./playerControlled";
 
 export type OnAddEntityCallback = (e: Entity)=>void;
 export type OnRemoveEntityCallback = (e: Entity)=>void;
@@ -20,8 +21,8 @@ export class World {
     public get playTime() { return this._playTime; }
 
     public get entities() { return this._entities; }
-    public get player() { return this._entities.find(e => e instanceof Player); }
-    public get digistivePods() { return this._entities.find(e => e instanceof DigestivePod); }
+    public get player() { return this._entities.find(e => e instanceof Node && e.construct instanceof Player); }
+    public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct instanceof PlayerControlled && e.construct.pods.length> 0); }
     public get node() { return this._entities.find(e => e instanceof Node); }
     public get human() { return this._entities.find(e => e instanceof Human); }
 
@@ -66,6 +67,9 @@ export class World {
         }
 
         this._entities.push(entity);
+         
+        for(const c of this._onAddEntityCallbacks)
+            c(entity);
     }
 
     public remove(entity: Entity): void {
@@ -75,6 +79,9 @@ export class World {
         }
 
         this._entities.splice(idx, 1);
+
+        for(const c of this._onRemoveEntityCallbacks)
+            c(entity);
     }
 
     public onAddEntity(onAddEntityCallback: OnAddEntityCallback) {
@@ -83,6 +90,14 @@ export class World {
         for(const e of this._entities) {
             onAddEntityCallback(e);
         }
+    }
+
+    public offAddEntity(onAddEntityCallback: OnAddEntityCallback) {
+        const idx = this._onAddEntityCallbacks.indexOf(onAddEntityCallback);
+        if (idx == -1) {
+            throw new Error("Callback is not bound");
+        }
+        this._onAddEntityCallbacks.splice(idx, 1);
     }
 
     public onRemoveEntity(onRemoveEntityCallback: OnRemoveEntityCallback) {

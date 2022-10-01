@@ -4,3 +4,5 @@ bin
 dist
 .suo
 .vs
+.kbp
+.dtmp

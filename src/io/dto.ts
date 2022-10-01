@@ -11,13 +11,14 @@ export interface EntityData {
     y: number;
 }
 
-export type EntityDataTypes = HumanData | PlayerData | NodeData | DigestivePodData;
+export type EntityDataTypes = HumanData | NodeData;
+export type NodeConstructionDataTypes = PlayerConstructionData;
 
 export interface HumanData extends EntityData {
     type: "human";
 }
 
-export interface PlayerData extends EntityData {
+export interface PlayerConstructionData extends NodeConstructionData {
     type: "player";
     pods: Array<number>;
     timeSincePodConsumed: number;
@@ -28,11 +29,14 @@ export interface PlayerData extends EntityData {
 export interface NodeData extends EntityData {
     type: "node";
     neighbours: Array<number>;
-    construction?: NodeConstructionData;
+    construction?: NodeConstructionDataTypes;
 }
 
-export interface DigestivePodData extends EntityData {
-    type: "digestivePod";
+export interface DigestivePodData {
+    id: number;
+    x: number;
+    y: number;
+    age: number;
 }
 
 export interface NodeConstructionData {

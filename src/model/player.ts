@@ -1,7 +1,8 @@
-import { PlayerData } from "../io/dto";
+import { PlayerConstructionData } from "../io/dto";
 import { DigestivePod } from "./digestivePod";
 import { Entity } from "./entity";
 import { Node } from "./node";
+import { NodeConstruction } from "./nodeConstruction";
 import { PlayerControlled } from "./playerControlled";
 import { OnAddEntityCallback, World } from "./world";
 
@@ -11,18 +12,12 @@ import { OnAddEntityCallback, World } from "./world";
 const maxTimeSincePodConsumed = 10 * 1000;
 const witheringTime = 10 * 1000;
 
-export class Player implements Entity {
+export class Player implements NodeConstruction {
     public get id() { return this._id; }
     private _id: number;
 
-    public get x() { return this._x; }
-    private _x: number;
-
-    public get y() { return this._y; }
-    private _y: number;
-
-    public get world() { return this._world; }
-    private _world: World;
+    public get world() { return this._node.world; }
+    private _node: Node;
 
     public get pods(): ReadonlyArray<DigestivePod> { return this._pods; }
     private _pods = new Array<DigestivePod>();
@@ -40,21 +35,17 @@ export class Player implements Entity {
     public get buildPoints() { return this._buildpoints; }
     private _buildpoints = 3;
 
-    public constructor(world: World, data: PlayerData);
-    public constructor(world: World, x: number, b: number);
-    public constructor(world: World, a: PlayerData|number, b?: number) {
-        this._world = world;
+    public constructor(node: Node, data?: PlayerConstructionData) {
+        this._node = node;
+        this._node.construct = this;
 
-        if (a && typeof a == 'object') {
-            const data = a;
+        if (data) {
             this._id = data.id;
             this._timeSincePodConsumed = data.timeSincePodConsumed;
             this._withering = data.withering;
-            this._x = data.x;
-            this._y = data.y;
             this._buildpoints = data.buildPoints;
 
-            const waitingOnPods = new Array<number>();
+            const waitingOnPods = [...data.pods];
             const listenForPods: OnAddEntityCallback = (e) => {
                 // Find pods
                 if (waitingOnPods.includes(e.id) && e instanceof DigestivePod) {
@@ -63,20 +54,14 @@ export class Player implements Entity {
                 }
 
                 if (waitingOnPods.length == 0) {
-                    this._world.onRemoveEntity(listenForPods);
+                    this._node.world.onRemoveEntity(listenForPods);
                 }
             };
-            this._world.onAddEntity(listenForPods);
+            this._node.world.onAddEntity(listenForPods);
         }
         else {
-            if (typeof b !== 'number') {
-                throw new Error("X and Y coordinates are both required");
-            }
-            this._id = world.generateId();
-            this._x = a;
-            this._y = b;
+            this._id = this._node.world.generateId();
         }
-        this._world.add(this);
     }
 
     public update(elapsedTime: number): void {
@@ -89,16 +74,14 @@ export class Player implements Entity {
         }
     }
 
-    public serialize(): PlayerData {
+    public serialize(): PlayerConstructionData {
         return {
             id: this.id,
             type: "player",
             pods: this._pods.map(p=>p.id),
             timeSincePodConsumed: this.timeSincePodConsumed,
             withering: this._withering,
-            buildPoints: this._buildpoints,
-            x: this.x,
-            y: this.y
+            buildPoints: this._buildpoints
         }
     }
 
@@ -119,10 +102,13 @@ export class Player implements Entity {
         const podToConsume = this._pods.shift();
         if (podToConsume) {
             ++this._buildpoints;
-            this._world.remove(podToConsume);
         }
         else {
             this._withering = 0;
         }
+    }
+
+    public destroy(): void {
+        
     }
 }

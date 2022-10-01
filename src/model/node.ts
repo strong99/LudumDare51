@@ -1,7 +1,7 @@
 import { NodeData } from "../io/dto";
 import { Entity } from "./entity";
-import { JSONTypes } from "./json";
 import { NodeConstruction } from "./nodeConstruction";
+import * as NodeConstructionFactory from "./nodeConstructionFactory";
 import { OnAddEntityCallback, World } from "./world";
 
 export class Node implements Entity {
@@ -21,6 +21,7 @@ export class Node implements Entity {
     private _y: number;
 
     public get construct() { return this._construct; }
+    public set construct(value) { this._construct?.destroy(); this._construct = value; }
     private _construct?: NodeConstruction;
 
     public constructor(world: World, data: NodeData);
@@ -34,10 +35,10 @@ export class Node implements Entity {
             this._x = data.x;
             this._y = data.y;
             if (data.construction) {
-                throw new Error("To do: impement Node Construction Factory");
+                NodeConstructionFactory.TryCreate(this, data.construction);
             }
 
-            const waitingOnNeighbours = new Array<number>();
+            const waitingOnNeighbours = [...data.neighbours];
             const listenForNeighbours: OnAddEntityCallback = (e) => {
                 // Find neighbouring nodes
                 if (waitingOnNeighbours.includes(e.id) && e instanceof Node) {
