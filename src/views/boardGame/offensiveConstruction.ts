@@ -26,6 +26,7 @@ export class OffensiveConstruction implements NodeConstruction {
         this._sprite.loop = false;
         this._sprite.position.set(model.node.x, model.node.y);
         this._sprite.anchor.set(0.5, 0.9);
+        this._sprite.scale.set(0.75);
         this._sprite.zIndex = this._sprite.position.y + 1000;
 
         if (!this._node.gameLayer)throw new Error();

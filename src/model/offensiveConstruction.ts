@@ -60,6 +60,6 @@ export class OffensiveConstruction extends NodeConstruction {
     }
 
     public destroy(): void {
-        throw new Error("Method not implemented.");
+        
     }  
 }
