@@ -2,6 +2,7 @@ import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
 import { LureConstruction as LureConstructionModel } from "../../model/lureConstruction";
 import { AnimatedSprite, Sprite, Text, Texture } from "pixi.js";
+import { FruitMoveTo } from "./fruitMoveTo";
 
 
 export class LureConstruction implements NodeConstruction {
@@ -35,6 +36,8 @@ export class LureConstruction implements NodeConstruction {
         if (!this._node.gameLayer) throw new Error();
 
         this._node.gameLayer.addChild(this._sprite);
+
+        new FruitMoveTo(node, model);
     }
 
     private getFruitCountString() {
@@ -48,6 +51,7 @@ export class LureConstruction implements NodeConstruction {
     public update(timeElapsed: number): void {
         if (!this._sprite.playing && this._model.level + 1 !== this._sprite.currentFrame) {
             this._sprite.gotoAndStop(this._model.level + 1);
+            new FruitMoveTo(this._node, this._model);
         }
         this._txt.text = this.getFruitCountString();
     }

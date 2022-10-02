@@ -20,15 +20,12 @@ export function TryCreate(node: Node, nodeConstruction: NodeConstructionModel): 
         return new Tree(node, nodeConstruction);
     }
     else if (nodeConstruction instanceof LureConstructionModel) {
-        new FruitMoveTo(node, nodeConstruction);
         return new LureConstruction(node, nodeConstruction);
     }
     else if (nodeConstruction instanceof OffensiveConstructionModel) {
-        new FruitMoveTo(node, nodeConstruction);
         return new OffensiveConstruction(node, nodeConstruction);
     }
     else if (nodeConstruction instanceof DefensiveConstructionModel) {
-        new FruitMoveTo(node, nodeConstruction);
         return new DefensiveConstruction(node, nodeConstruction);
     }
     else if (nodeConstruction instanceof CityConstructionModel) {

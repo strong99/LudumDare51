@@ -2,6 +2,7 @@ import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
 import { DefensiveConstruction as DefensiveConstructionModel } from "../../model/defensiveConstruction";
 import { AnimatedSprite, Sprite, Texture } from "pixi.js";
+import { FruitMoveTo } from "./fruitMoveTo";
 
 
 export class DefensiveConstruction implements NodeConstruction {
@@ -30,6 +31,8 @@ export class DefensiveConstruction implements NodeConstruction {
         if (!this._node.gameLayer) throw new Error();
 
         this._node.gameLayer.addChild(this._sprite);
+        
+        new FruitMoveTo(node, model);
     }
 
     public is(model: any): boolean {
@@ -39,6 +42,7 @@ export class DefensiveConstruction implements NodeConstruction {
     public update(timeElapsed: number): void {
         if (!this._sprite.playing && this._model.level + 2 !== this._sprite.currentFrame) {
             this._sprite.gotoAndStop(this._model.level + 2);
+            new FruitMoveTo(this._node, this._model);
         }
     }
 

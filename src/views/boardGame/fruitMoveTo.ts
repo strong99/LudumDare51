@@ -20,8 +20,8 @@ export class FruitMoveTo implements Entity {
 
     private _flyTime: number = flySpeed;
     
-    public constructor(node: Node, model: NodeConstructionModel) {
-        this._view = node.view;
+    public constructor(fromNode: Node, model: NodeConstructionModel) {
+        this._view = fromNode.view;
         this._model = model;
 
         this._sprite = new Sprite(Texture.from('fruit.png'));
@@ -37,8 +37,8 @@ export class FruitMoveTo implements Entity {
         this._ex = model.node.x;
         this._ey = model.node.y;
 
-        node.view.entities.push(this);
-        node.view.gameLayer?.addChild(this._sprite);
+        this._view.entities.push(this);
+        this._view.gameLayer?.addChild(this._sprite);
     }
 
     public update(timeElapsed: number): void {
