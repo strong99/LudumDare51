@@ -23,6 +23,25 @@ export class TreePlayer implements Player {
     public get world(): World { return this._world; }
     private _world: World;
 
+    public get buildPoints() { return this._world.nodes.filter(p=>p.construct instanceof TreeConstruct).map(p=>(p.construct as TreeConstruct).fruits).reduce((p, n)=>p + n); }
+    public set buildPoints(value) { 
+        const diff = value - this.buildPoints;
+        let toDo = Math.abs(diff);
+
+        const trees = this._world.nodes.filter(p=>p.construct instanceof TreeConstruct).map(p=>(p.construct as TreeConstruct));
+        for(const t of trees) {
+            if (toDo < 0 )
+                break;
+
+            if (diff < 0)
+                t.tryPick();
+            else 
+                throw new Error("Not supported");
+
+            toDo--;
+        }
+    }
+
     private _pathfinder = new NodePathfinder();
 
     public constructor(world: World, data: TreePlayerData) {
@@ -37,6 +56,9 @@ export class TreePlayer implements Player {
         
         if (node.construct?.canUpgrade(type) === false) {
             return false;
+        }
+        else if (this.buildPoints == 0) {
+            return this.buildPoints > 0;
         }
 
         const notExists = !node.construct;
@@ -62,6 +84,7 @@ export class TreePlayer implements Player {
         }
 
         if (!node.construct && type === 'lure') {
+            this.buildPoints--;
             node.construct = new LureConstruction(node, {
                 type: "lure",
                 id: node.world.generateId(),
@@ -73,6 +96,7 @@ export class TreePlayer implements Player {
             node.construct.tryUpgrade(type);
         }
         else {
+            this.buildPoints--;
             node.construct = (type === "defensive" ?
                 new DefensiveConstruction(node, {
                     type: "defensive",

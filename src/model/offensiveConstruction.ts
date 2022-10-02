@@ -1,6 +1,7 @@
 import { OffensiveConstructionData } from "../io/dto";
 import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
+import { TreePlayer } from "./treePlayer";
 
 export class OffensiveConstruction extends NodeConstruction {
     public get node(): Node { return this._node; }
@@ -26,12 +27,14 @@ export class OffensiveConstruction extends NodeConstruction {
     }
 
     public canUpgrade(type?: string): boolean {
-        return this.hasUpgrade(type);
+        return this.hasUpgrade(type) && (this._player as TreePlayer).buildPoints > 0;
     }
 
     public tryUpgrade(type: string): boolean {
         if (!this.canUpgrade(type))
             return false;
+
+        (this._player as TreePlayer).buildPoints--;
 
         if (this.level < 3) {
             this._level++;

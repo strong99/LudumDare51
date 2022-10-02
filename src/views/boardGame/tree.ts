@@ -8,6 +8,7 @@ export class Tree implements NodeConstruction {
     private _model: TreeModel;
     private _sprite: AnimatedSprite;
     private _txt: Text;
+    private _fruits = new Array<Sprite>();
 
     public constructor(node: Node, model: TreeModel) {
         this._node = node;
@@ -53,6 +54,24 @@ export class Tree implements NodeConstruction {
         }
 
         this._txt.text = this.getFruitCountString();
+
+        if (this._model.fruits > this._fruits.length) {
+            for(let i = this._fruits.length; i < this._model.fruits; i++) {
+                const f = new Sprite(Texture.from('fruit.png'));
+                this._sprite.addChild(f);
+                f.y = -120;
+                this._fruits.push(f);
+            }
+            for(let i = 0; i < this._fruits.length; i++) {
+                this._fruits[i].x = ((i / 10) - 0.5) * 200;
+            }
+        }
+        else if (this._fruits.length > this._model.fruits) {
+            for(let i = this._fruits.length; i > this._model.fruits; i--) {
+                this._fruits[i - 1].destroy();
+            }
+            this._fruits.length = this._model.fruits;
+        }
     }
 
     public destroy(): void {

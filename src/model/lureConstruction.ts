@@ -3,6 +3,7 @@ import { DefensiveConstruction } from "./defensiveConstruction";
 import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
 import { OffensiveConstruction } from "./offensiveConstruction";
+import { TreePlayer } from "./treePlayer";
 
 const maxTimeFruitGrowth = 10 * 1000;
 
@@ -35,12 +36,14 @@ export class LureConstruction extends NodeConstruction {
     }
 
     public canUpgrade(type: string): boolean {
-        return this.hasUpgrade(type);
+        return this.hasUpgrade(type) && (this._player as TreePlayer).buildPoints > 0;
     }
 
     public tryUpgrade(type: string): boolean {
         if (!this.canUpgrade(type))
             return false;
+            
+        (this._player as TreePlayer).buildPoints--;
 
         if (this.level < 3) {
             this._level++;
