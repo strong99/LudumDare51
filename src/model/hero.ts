@@ -8,7 +8,7 @@ import { TreeConstruct } from "./treeConstruct";
 import { TreePlayer } from "./treePlayer";
 import { World } from "./world";
 
-enum HeroTask {
+export enum HeroTask {
     None,
     Find,
     Attack,
@@ -23,7 +23,10 @@ function calcDistance(a: { x: number, y: number }, b: { x: number, y: number }) 
 
 export class Hero extends Human {
     private _path?: Array<Node>;
+
+    public get task() { return this._task; }
     private _task: HeroTask = HeroTask.None;
+    
     private _pathfinder = new NodePathfinder();
 
     public constructor(world: World, data: HeroData) {

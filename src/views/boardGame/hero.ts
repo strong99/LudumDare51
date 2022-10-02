@@ -1,5 +1,5 @@
 import { Sprite, Texture } from 'pixi.js';
-import { Hero as HeroModel } from '../../model/hero';
+import { Hero as HeroModel, HeroTask } from '../../model/hero';
 import { BoardGameView } from '../boardGameView';
 import { Entity } from '../entity';
 
@@ -23,7 +23,14 @@ export class Hero implements Entity {
         this._view.gameLayer.addChild(this._sprite);
     }
 
+    private _fighting = false;
     public update(timeElapsed: number): void {
+        const fightState = this._model.task === HeroTask.Attack;
+        if (this._fighting !== fightState) {
+            if (fightState) this._view.startPlaying('fighting');
+            else this._view.stopPlaying('fighting');
+        }
+
         this._sprite.position.set(this._model.x, this._model.y);
         this._sprite.zIndex = this._sprite.position.y + (1 - this._sprite.anchor.y) * this._sprite.texture.height + 1000;
         this._view.queMusic("depressedTune");
@@ -31,5 +38,6 @@ export class Hero implements Entity {
     
     public destroy(): void {
         this._sprite?.parent.removeChild(this._sprite);
+        if (this._fighting) this._view.stopPlaying('fighting');
     }
 }

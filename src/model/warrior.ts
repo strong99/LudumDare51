@@ -8,7 +8,7 @@ import { TreePlayer } from "./treePlayer";
 import { WarriorData } from "../io/dto";
 import { World } from "./world";
 
-enum WarriorTask {
+export enum WarriorTask {
     None,
     Find,
     Attack,
@@ -23,7 +23,10 @@ function calcDistance(a: { x: number, y: number }, b: { x: number, y: number }) 
 
 export class Warrior extends Human {
     private _path?: Array<Node>;
+
+    public get task() { return this._task; }
     private _task: WarriorTask = WarriorTask.None;
+
     private _pathfinder = new NodePathfinder();
 
     public constructor(world: World, data: WarriorData) {
