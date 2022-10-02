@@ -143,6 +143,7 @@ export class MenuGameView implements GameView {
     }
 
     public update(elapsedTime: number): void {
+        this._questBoard!.position.set(-window.innerWidth / 2, window.innerHeight / 2);
         this._parentResource?.position.set(window.innerWidth / 2, window.innerHeight / 2);
         const sx = window.innerWidth / 1600;
         const sy = window.innerHeight / 1080;
