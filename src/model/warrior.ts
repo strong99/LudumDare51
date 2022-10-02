@@ -1,6 +1,5 @@
 import { CityConstruction } from "./cityConstruction";
 import { Human } from "./human";
-import { LureConstruction } from "./lureConstruction";
 import { Node } from "./node";
 import { NodePathfinder } from "./nodePathfinder";
 import { TownConstruction } from "./townConstruction";
@@ -16,6 +15,12 @@ enum WarriorTask {
     Retreat
 }
 
+function calcDistance(a: { x: number, y: number }, b: { x: number, y: number }) {
+    const dx = a.x - b.x;
+    const dy = (a.y - b.y) * 1.8;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
 export class Warrior extends Human {
     private _path?: Array<Node>;
     private _task: WarriorTask = WarriorTask.None;
@@ -25,6 +30,7 @@ export class Warrior extends Human {
         super(world, data);
     }
 
+    private _attackTimer = 7500;
     public update(elapsedTime: number): void {
         if (!this._path || this._path.length === 0) {
             delete this._path;
@@ -42,6 +48,19 @@ export class Warrior extends Human {
             else if (this._task === WarriorTask.Attack) {
                 if (!nearestNode.construct?.player || nearestNode.construct?.player instanceof TreePlayer === false) {
                     this._task = WarriorTask.Find;
+                }
+                else {
+                    this._attackTimer -= elapsedTime;
+
+                    if (this._attackTimer < 0) {
+                        if (nearestNode.construct instanceof TreeConstruct && nearestNode.construct.fruits > 0) {
+                            nearestNode.construct.tryPick();
+                        }
+                        else if (nearestNode.construct) {
+                            nearestNode.construct = undefined;
+                        }
+                        this._attackTimer += 7500;
+                    }
                 }
             }
             else if (this._task === WarriorTask.Retreat) {
@@ -68,8 +87,11 @@ export class Warrior extends Human {
         if (this._path) {
             const next = this._path[0];
 
-            const harvestable = (next.construct instanceof TreeConstruct || next.construct instanceof LureConstruction) && next.construct.fruits > 0;
-            if (harvestable) {
+            const attackInterest = (
+                next.construct?.player instanceof TreePlayer ||
+                next.world.digistivePods.some(p => calcDistance(p, next) < 64));
+            if (attackInterest) {
+                this._task = WarriorTask.Attack;
                 this._path.length = 1;
             }
 
@@ -78,7 +100,7 @@ export class Warrior extends Human {
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             // If peasant comes close to a sub-node continue to the next
-            if ((this._path.length > 1 && distance < 128) ||
+            if ((this._path.length > 1 && distance < 64) ||
                 distance < 32) {
                 this._path.shift();
             }

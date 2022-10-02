@@ -28,7 +28,7 @@ export class World {
     public get entities(): ReadonlyArray<Entity> { return this._entities; }
     public get nodes(): ReadonlyArray<Node> { return this._entities.filter(e=>e instanceof Node) as Array<Node>; }
     public get players() { return this._players; }
-    public get digistivePods() { return this._entities.filter(e => e instanceof DigestivePod); }
+    public get digistivePods() { return this._entities.filter(e => e instanceof DigestivePod) as Array<DigestivePod> as ReadonlyArray<DigestivePod>; }
     public get node() { return this._entities.find(e => e instanceof Node); }
     public get human() { return this._entities.find(e => e instanceof Human); }
 
