@@ -29,11 +29,15 @@ export class CityConstruction extends NodeConstruction implements UnitSpawn {
         this._alertness++;
     }
 
-    public canUpgrade(type: string): boolean {
+    public hasUpgrade(type?: string): boolean {
         return false;
     }
 
-    public tryUpgrade(type: string): boolean {
+    public canUpgrade(type?: string): boolean {
+        return false;
+    }
+
+    public tryUpgrade(type?: string): boolean {
         return false;
     }
 

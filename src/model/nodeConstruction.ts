@@ -9,9 +9,10 @@ export abstract class NodeConstruction {
     public get player() { return this._player; } 
     protected _player!: Player;
 
-    public abstract canUpgrade(type: string): boolean;
-    public abstract tryUpgrade(type: string): boolean;
-    public abstract upgradeRequirement(type: string): []|null;
+    public abstract hasUpgrade(type?: string): boolean;
+    public abstract canUpgrade(type?: string): boolean;
+    public abstract tryUpgrade(type?: string): boolean;
+    public abstract upgradeRequirement(type?: string): []|null;
 
     public abstract update(timeElapsed: number): void;
 

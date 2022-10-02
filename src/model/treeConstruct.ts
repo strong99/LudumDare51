@@ -7,8 +7,7 @@ import { OnAddEntityCallback, OnRemoveEntityCallback } from "./world";
 /**
  * LD51 theme value: 10 seconds
  */
-//const maxTimeSincePodConsumed = 10 * 1000;
-const maxTimeSincePodConsumed = 500;
+const maxTimeSincePodConsumed = 10 * 1000;
 const maxTimeFruitGrowth = 10 * 1000;
 const witheringTime = 10 * 1000;
 
@@ -106,7 +105,11 @@ export class TreeConstruct extends NodeConstruction {
         }
     }
     
-    public canUpgrade(type: string): boolean {
+    public hasUpgrade(type?: string): boolean {
+        return false;
+    }
+    
+    public canUpgrade(type?: string): boolean {
         return false;
     }
     

@@ -31,15 +31,15 @@ export class TreePlayer implements Player {
         this._world.addPlayer(this);
     }
 
-    public canUpgradeNode(node: Node, type: "lure" | "defensive" | "offensive"): boolean {
+    public canUpgradeNode(node: Node, type?: "lure" | "defensive" | "offensive"): boolean {
         if (this._isDead)
             return false;
+        
+        if (node.construct?.canUpgrade(type) === false) {
+            return false;
+        }
 
-        const notExists = (
-            !node.construct ||
-            node.construct.canUpgrade(type)
-        );
-
+        const notExists = !node.construct;
         const isConnected = this._pathfinder.can(
             node,
             (c, n, v) => n.construct?.player === this ? 1 : null,
@@ -53,7 +53,7 @@ export class TreePlayer implements Player {
         return true;
     }
 
-    public tryUpgradeNode(node: Node, type: "lure" | "defensive" | "offensive"): boolean {
+    public tryUpgradeNode(node: Node, type?: "lure" | "defensive" | "offensive"): boolean {
         if (this._isDead)
             return false;
 
@@ -130,7 +130,7 @@ export class TreePlayer implements Player {
         }
 
         const trapRange = 64;
-        const alertRange = 128;
+        const alertRange = 196;
 
         for (const p of peasants) {
             const dx = p.x - node.x;
@@ -171,7 +171,8 @@ export class TreePlayer implements Player {
 
         const items = new Array<Interaction>();
         if (entity instanceof Node) {
-            if (entity.construct instanceof LureConstruction) {
+            if (entity.construct instanceof LureConstruction || 
+                entity.construct instanceof TreeConstruct) {
                 items.push({
                     id: "activateTrap",
                     can: () => this.canActiveTrap(entity),
@@ -204,22 +205,10 @@ export class TreePlayer implements Player {
             else if (entity.construct instanceof TreeConstruct === false) {
                 items.push(...[
                     {
-                        id: "upgradeLure",
-                        can: () => this.canUpgradeNode(entity, "lure"),
-                        do: () => this.tryUpgradeNode(entity, "lure"),
+                        id: "upgrade",
+                        can: () => this.canUpgradeNode(entity),
+                        do: () => this.tryUpgradeNode(entity),
                         requirements: () => this.upgradeNodeRequirements(entity, "lure"),
-                    },
-                    {
-                        id: "upgradeDefensive",
-                        can: () => this.canUpgradeNode(entity, "defensive"),
-                        do: () => this.tryUpgradeNode(entity, "defensive"),
-                        requirements: () => this.upgradeNodeRequirements(entity, "defensive"),
-                    },
-                    {
-                        id: "upgradeOffensive",
-                        can: () => this.canUpgradeNode(entity, "offensive"),
-                        do: () => this.tryUpgradeNode(entity, "offensive"),
-                        requirements: () => this.upgradeNodeRequirements(entity, "offensive"),
                     }
                 ]);
             }

@@ -214,6 +214,7 @@ export class BoardGameView implements PlayGameView {
             this._gameOverDialog = new GameOverDialog(this, this._player);
         }
         this._gameOverDialog?.update(elapsedTime);
+        this._dialog?.update(elapsedTime);
     }
 
     public destroy(): void {

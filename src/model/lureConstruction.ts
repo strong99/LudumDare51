@@ -30,8 +30,12 @@ export class LureConstruction extends NodeConstruction {
         this._player = player;
     }
 
+    public hasUpgrade(type: string): boolean {
+        return ((!type || type === "lure") && this.level < 3) || type === "defensive" || type === "offensive";
+    }
+
     public canUpgrade(type: string): boolean {
-        return (this.level < 3) || type === "defensive" || type === "offensive";
+        return this.hasUpgrade(type);
     }
 
     public tryUpgrade(type: string): boolean {

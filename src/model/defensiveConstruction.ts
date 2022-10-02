@@ -22,8 +22,12 @@ export class DefensiveConstruction extends NodeConstruction {
         this._player = player;
     }
 
-    public canUpgrade(type: string): boolean {
+    public hasUpgrade(type?: string): boolean {
         return (this.level < 3);
+    }
+
+    public canUpgrade(type?: string): boolean {
+        return this.hasUpgrade(type);
     }
 
     public tryUpgrade(type: string): boolean {
@@ -56,6 +60,6 @@ export class DefensiveConstruction extends NodeConstruction {
     }
 
     public destroy(): void {
-        throw new Error("Method not implemented.");
+        
     }   
 }

@@ -48,7 +48,7 @@ export class Peasant extends Human {
 
             let task: (n: Node) => boolean;
             if (this._task === PeasantTask.Forage) {
-                task = (n) => nearestNode !== n && (n.construct instanceof LureConstruction || n.construct instanceof TreeConstruct);
+                task = (n) => nearestNode !== n && (n.construct instanceof LureConstruction || n.construct instanceof TreeConstruct) && n.construct.fruits > 0;
             }
             else if (this._task === PeasantTask.Socialize ||
                 this._task === PeasantTask.Alert) {
@@ -68,7 +68,7 @@ export class Peasant extends Human {
 
             const path = this._pathfinder.find(
                 nearestNode,
-                (c, n, s) => 500 * (0.75 + Math.random() / 4) * (1 + (4 - (n.road - c.road)) / 4),
+                (c, n, s) => n.construct instanceof DefensiveConstruction ? null : (500 * (0.75 + Math.random() / 4) * (1 + (4 - (n.road - c.road)) / 4)),
                 task
             );
 
@@ -80,9 +80,13 @@ export class Peasant extends Human {
         // move towards path
         if (this._path) {
             const next = this._path[0];
+            if (next instanceof DefensiveConstruction) {
+                this._path.length = 0;
+                return;
+            }
 
             const harvestable = (next.construct instanceof TreeConstruct || next.construct instanceof LureConstruction) && next.construct.fruits > 0;
-            if (harvestable) {
+            if (this._task !== PeasantTask.Alert && !this._carrying && harvestable) {
                 this._path.length = 1;
             }
 
@@ -121,6 +125,7 @@ export class Peasant extends Human {
 
     public alert() {
         this._task = PeasantTask.Alert;
+        if (this._path) this._path.length = 0;
         delete this._path;
     }
 

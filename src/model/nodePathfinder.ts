@@ -53,8 +53,10 @@ export class NodePathfinder {
                 let tentative_gScore = gScore[current.id] + this.neighbourDistanceCost(current, neighbour);
 
                 const additionalCost = cost(current, neighbour, tentative_gScore);
-                if (additionalCost == null) continue;
-                else tentative_gScore += additionalCost;
+                if (additionalCost == null) 
+                    continue;
+                else 
+                    tentative_gScore += additionalCost;
 
                 if (neighbour.id in gScore === false || tentative_gScore < gScore[neighbour.id]) {
                     // This path to neighbor is better than any previous one. Record it!

@@ -21,8 +21,12 @@ export class OffensiveConstruction extends NodeConstruction {
         this._player = player;
     }
 
-    public canUpgrade(type: string): boolean {
+    public hasUpgrade(type?: string): boolean {
         return (this.level < 3);
+    }
+
+    public canUpgrade(type?: string): boolean {
+        return this.hasUpgrade(type);
     }
 
     public tryUpgrade(type: string): boolean {

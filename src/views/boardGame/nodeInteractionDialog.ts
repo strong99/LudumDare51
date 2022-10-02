@@ -1,4 +1,4 @@
-import { Container, Text } from "pixi.js";
+import { Container, Sprite, Text, Texture } from "pixi.js";
 import { Node as NodeModel } from "../../model/node";
 import { Interaction } from "../../model/player";
 import { BoardGameView } from "../boardGameView";
@@ -7,8 +7,8 @@ import { Entity } from "../entity";
 export class NodeInteractionDialog implements Entity {
     private _view: BoardGameView;
     private _model: NodeModel;
-    private _layer = new Container();
-    private _interactions = new Array<Interaction>();
+    private _layer: Container;
+    private _interactions = new Array<{ model: Interaction, visual: Sprite }>();
 
     public constructor(view: BoardGameView,  model: NodeModel) {
         this._view = view;
@@ -18,37 +18,54 @@ export class NodeInteractionDialog implements Entity {
             throw new Error("No layer available");
         }
 
-        this._view.gameLayer.addChild(this._layer);
-        this._layer.x = model.x;
-        this._layer.y = model.y;
+        if (!this._view.gameLayer)
+            throw new Error();
+
+        this._layer = new Container();
+        this._layer.x = this._model.x;
+        this._layer.y = this._model.y;
         this._layer.zIndex = 9999999;
 
-        this._interactions = this._view.player.interactions(model);
-        for(let i = 0; i < this._interactions.length; ++i) {
-            const interaction = this._interactions[i];
-            const sprite = new Text(interaction.id);
+        this._view.gameLayer.addChild(this._layer);
+
+        const interactions = this._view.player.interactions(this._model);
+        for(let i = 0; i < interactions.length; ++i) {
+            const interaction = interactions[i];
+            const id = interaction.id[0].toUpperCase() + interaction.id.substring(1);
+            const sprite = new Sprite(Texture.from(`icon${id}.png`));
             sprite.interactive = true;
             sprite.anchor.set(0.5,0.5);
-            const qi = i * Math.PI / (this._interactions.length / 2);
             sprite.position.set(
-                Math.cos(qi) * 100,
-                Math.sin(qi) * 100
+                -80 * (-interactions.length / 2 + i),
+                50
             );
-            if (interaction.can()) {
-                sprite.on('click', ()=> { 
+            sprite.on('click', ()=> { 
+                if (interaction.can()) {
                     interaction.do();
                     this._view.select();
-                });
-            }
-            else {
+                }
+            });
+            sprite.on('pointerover', ()=> { 
+                sprite.tint = 0xccccff;
+                sprite.scale.set(1.25);
+            });
+            sprite.on('pointerout', ()=> { 
+                sprite.tint = 0xffffff;
+                sprite.scale.set(1);
+            });
+            
+            if (!interaction.can()) {
                 sprite.alpha = .5;
             }
             this._layer.addChild(sprite);
+            this._interactions.push({ model: interaction, visual: sprite });
         }
     }
 
     public update(timeElapsed: number): void {
-        
+        for(const i of this._interactions) {
+            i.visual.alpha = i.model.can() ? 1: 0.5;
+        }
     }
 
     public destroy(): void {
