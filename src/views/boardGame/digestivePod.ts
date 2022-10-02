@@ -19,6 +19,7 @@ export class DigestivePod implements Entity {
         this._view = view;
         this._model = model;
 
+        this._view.playOnce('grow');
         const textures = new Array<Texture>();
         for(let i = 0; i < 11; i++) {
             textures.push(Texture.from(`digestivePod/frame00${("00" + i).slice(-2)}.png`));

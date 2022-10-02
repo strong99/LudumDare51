@@ -19,6 +19,7 @@ export class OffensiveConstruction implements NodeConstruction {
             textures.push(Texture.from(`offensiveConstruct/frame000${i}.png`));
         }
 
+        this._node.view.playOnce('grow');
         this._sprite = new AnimatedSprite(textures);
         this._sprite.play();
         this._sprite.onFrameChange = idx => (this._model.level + 2 === idx) && this._sprite.stop();
@@ -43,6 +44,7 @@ export class OffensiveConstruction implements NodeConstruction {
     public update(timeElapsed: number): void {
         if (!this._sprite.playing && this._model.level + 2 !== this._sprite.currentFrame) {
             this._sprite.gotoAndStop(this._model.level + 2);
+            this._node.view.playOnce('grow');
             new FruitMoveTo(this._node, this._model);
         }
     }

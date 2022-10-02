@@ -1,4 +1,4 @@
-import { Application, Container, Loader, Sprite, Texture } from "pixi.js";
+import { Application, Container, Loader, Sprite, Text, Texture } from "pixi.js";
 import { OnAddEntityCallback, World } from "../model/world";
 import { GameViewService } from "./gameViewService";
 import { LoadState, LoadStateListener } from "./loadState";
@@ -12,6 +12,7 @@ import { Player as PlayerModel } from "../model/player";
 import { TreePlayer } from "../model/treePlayer";
 import { GameOverDialog } from "./boardGame/gameOverDialog";
 import { worldTreeLocations } from "../demo/treeLocations";
+import { Sound } from "@pixi/sound";
 
 export class BoardGameView implements PlayGameView {
     private _service: GameViewService;
@@ -40,12 +41,9 @@ export class BoardGameView implements PlayGameView {
     private _scrollViewport = 0;
 
     private _parallax = new Array<Sprite>();
+    private _topright?: Container;
 
     private _gameOverDialog?: Entity;
-
-    public goToMenu() {
-        this._service.swapViewToMenu();
-    }
 
     private _onAddEntity: OnAddEntityCallback = e => {
         if (e instanceof NodeModel) {
@@ -88,6 +86,63 @@ export class BoardGameView implements PlayGameView {
         */
     }
     //private _treeJson = new Array<{type:string, x: number, y: number}>();
+
+    public goToMenu() {
+        this._service.swapViewToMenu();
+    }
+
+    private _activeSounds: Array<{ id: string, sound: Sound, count: number }> = [];
+    public startPlaying(audio: string) {
+        let activeSound = this._activeSounds.find(p=>p.id === audio);
+        if (!activeSound) {
+            const sound = Sound.from(`${audio}.ogg`);
+            sound.play();
+            activeSound = {
+                id: audio,
+                sound,
+                count: 1
+            };
+            activeSound.sound.loop = true;
+            this._activeSounds.push(activeSound);
+        }
+        else {
+            activeSound.count++;
+        }
+    }
+
+    public stopPlaying(audio: string) {
+        let activeSound = this._activeSounds.find(p=>p.id === audio);
+        if (activeSound) {
+            activeSound.count--;
+            if (activeSound.count === 0) {
+                activeSound.sound.loop = false;
+            }
+            const idx = this._activeSounds.indexOf(activeSound);
+            this._activeSounds.splice(idx, 1);
+        }
+    }
+
+    private _prevMusic?: Sound;
+    private _music?: Sound;
+    public playMusic(audio: string) {
+        if (this._music) {
+            this._music.loop = false;
+        }
+        this._music = Sound.from(`${audio}.ogg`);
+        this._music.loop = true;
+    }
+
+    public stopMusic() {
+        if (this._music) {
+            this._music.loop = false;
+            this._prevMusic = this._music;
+            delete this._music;
+        }
+    }
+
+    public playOnce(audio: string) {
+        Sound.from(`${audio}.ogg`).play();
+    }
 
     private _keydown: (this: Window, ev: KeyboardEvent) => any = e => {
         if (e.code === 'ArrowLeft') this._scrollViewport = -1;
@@ -171,6 +226,8 @@ export class BoardGameView implements PlayGameView {
                 throw new Error("Game layer not created");
             }
 
+            this.playMusic('happytune');
+
             for (let i = 1; i < 6; i++) {
                 const background = new Sprite(loader.resources[`faraway00${6 - i}.png`].texture);
                 background.y = -100;
@@ -197,6 +254,27 @@ export class BoardGameView implements PlayGameView {
 
             this._world.onAddEntity(this._onAddEntity);
 
+            this._topright = new Container();
+            this._topright.x = window.innerWidth - 10;
+            this._topright.y = window.innerHeight - 10;
+            const hdr = new Text("The Blood Tree", {
+                fontSize: 30,
+                align: 'right',
+                fill: 'white',
+                fontWeight: 'bolder'
+            });
+            hdr.anchor.set(1,1);
+            hdr.y = -20 * 3;
+            this._topright.addChild(hdr);
+            const expl = new Text("Lure and trap humans to survive and thrive\nBeware not to disrupt men for the Hero will smite\nGrow your roots through magical ground nodes", {
+                fontSize: 20,
+                align: 'right',
+                fill: 'white'
+            });
+            expl.anchor.set(1,1);
+            this._topright.addChild(expl);
+            this._uiLayer?.addChild(this._topright);
+
             loadState.onFinished()
         });
         loader.load();
@@ -206,6 +284,9 @@ export class BoardGameView implements PlayGameView {
     public update(elapsedTime: number): void {
         if (!this._gameLayer) return;
         if (!this._viewLayer) return;
+
+        if (this._prevMusic?.isPlaying === false) delete this._prevMusic;
+        if (!this._prevMusic && this._music?.isPlaying === false) this._music.play();
 
         this._world?.update(elapsedTime);
 
@@ -239,9 +320,21 @@ export class BoardGameView implements PlayGameView {
         }
         this._gameOverDialog?.update(elapsedTime);
         this._dialog?.update(elapsedTime);
+        if (this._topright) {
+            this._topright.x = window.innerWidth - 10;
+            this._topright.y = window.innerHeight - 10;
+        }
     }
 
     public destroy(): void {
+        this._prevMusic?.stop();
+        this._music?.stop();
+        delete this._music;
+        delete this._prevMusic;
+        for(const a of this._activeSounds) {
+            a.sound.stop();
+        }
+
         window.removeEventListener('pointermove', this._onPointerMove);
         window.removeEventListener('keydown', this._keydown);
         window.removeEventListener('keyup', this._keyup);

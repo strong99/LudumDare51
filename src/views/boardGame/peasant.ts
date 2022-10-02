@@ -1,4 +1,4 @@
-import { AnimatedSprite, Sprite, Texture } from 'pixi.js';
+import { AnimatedSprite, Sprite, Texture, ViewableBuffer } from 'pixi.js';
 import { Peasant as PeasantModel, PeasantTask } from '../../model/peasant';
 import { OnRemoveEntityCallback } from '../../model/world';
 import { BoardGameView } from '../boardGameView';
@@ -42,6 +42,7 @@ export class Peasant implements Entity {
             for(let i = 0; i < 4; i++) {
                 textures.push(Texture.from(`iconAlert/frame000${i}.png`));
             }
+            this._view.startPlaying('alarm');
             this._icon?.destroy();
             this._icon = new AnimatedSprite(textures);
             this._icon.play();
@@ -50,11 +51,12 @@ export class Peasant implements Entity {
             this._icon.anchor.set(0.5);
             this._icon.y -= 34;
             this._sprite.addChild(this._icon);
-            delete this._icon;
         }
         else if (!this._model.isAlerted && this._state === PeasantTask.Alert) {
-            delete this._state;
+            this._view.stopPlaying('alarm');
+            this._icon?.stop();
             this._icon?.destroy();
+            delete this._state;
             delete this._icon;
         }
     }

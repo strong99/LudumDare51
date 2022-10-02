@@ -1,9 +1,10 @@
-import { AnimatedSprite, Application, Container, Loader, Sprite, SpritesheetLoader, Text, Texture } from "pixi.js";
+import { AnimatedSprite, Application, Container, Loader, Sprite, SpritesheetLoader, Text, TextStyle, Texture } from "pixi.js";
 import { DemoWorld } from "../demo/DemoWorld";
 import { World } from "../model/world";
 import { GameView } from "./gameView";
 import { GameViewService } from "./gameViewService";
 import { LoadState } from "./loadState";
+import { Sound } from "@pixi/sound";
 
 export class MenuGameView implements GameView {
 
@@ -18,6 +19,7 @@ export class MenuGameView implements GameView {
     private _background?: Sprite;
     private _foreground?: Sprite;
     private _questBoard?: Sprite;
+    private _topright?: Container;
 
     private _rootGrabbingTextures?: Array<Texture>;
 
@@ -29,8 +31,40 @@ export class MenuGameView implements GameView {
         this._viewService = viewService;
         this._activeWorld = world;
     }
+    
+    private _prevMusic?: Sound;
+    private _music?: Sound;
+    private _musicId?: string;
+    public playMusic(audio: string) {
+        if (this._musicId === audio && this._music) {
+            this._music.loop = true;
+            return;
+        }
+
+        if (this._music) {
+            this._music.loop = false;
+        }
+        this._musicId = audio;
+        this._music = Sound.from(`${audio}.ogg`);
+        this._music.loop = true;
+    }
+
+    public stopMusic() {
+        if (this._music) {
+            delete this._musicId;
+            this._music.loop = false;
+            this._prevMusic = this._music;
+            delete this._music;
+        }
+    }
 
     public prepare(): LoadState {
+        const startMusic = ()=>{
+            this.playMusic('happytune');
+            window.removeEventListener('click', startMusic);
+        };
+        window.addEventListener('click', startMusic);
+
         this._parentResource = new Container();
         this._parentResource.visible = false;
 
@@ -54,6 +88,8 @@ export class MenuGameView implements GameView {
             if (!this._parentResource) {
                 throw new Error("Layer not loaded");
             }
+
+            this.playMusic('happytune');
 
             this._rootGrabbingTextures ??= [];
             this._rootGrabbingTextures.length = 0;
@@ -98,6 +134,27 @@ export class MenuGameView implements GameView {
                 this._questBoard.addChild(this._continueButton);
             }
 
+            this._topright = new Container();
+            this._topright.x = window.innerWidth / 2 - 10;
+            this._topright.y = window.innerHeight / 2 - 10;
+            const hdr = new Text("The Blood Tree", {
+                fontSize: 30,
+                align: 'right',
+                fill: 'white',
+                fontWeight: 'bolder'
+            });
+            hdr.anchor.set(1,1);
+            hdr.y = -20 * 3;
+            this._topright.addChild(hdr);
+            const expl = new Text("Lure and trap humans to survive and thrive\nBeware not to disrupt men for the Hero will smite\ngrow your roots through magical ground nodes", {
+                fontSize: 20,
+                align: 'right',
+                fill: 'white'
+            });
+            expl.anchor.set(1,1);
+            this._topright.addChild(expl);
+            this._parentResource.addChild(this._topright);
+
             loadState.onFinished()
         });
         loader.load();
@@ -105,6 +162,8 @@ export class MenuGameView implements GameView {
     }
 
     private grabButton(sprite: Sprite, callback: ()=>void) {
+        Sound.from(`rip.ogg`).play();
+
         if (!this._rootGrabbingTextures) {
             throw new Error("Grabbing root textures not loaded");
         }
@@ -143,6 +202,9 @@ export class MenuGameView implements GameView {
     }
 
     public update(elapsedTime: number): void {
+        if (this._prevMusic?.isPlaying === false) delete this._prevMusic;
+        if (!this._prevMusic && this._music?.isPlaying === false) this._music.play();
+
         this._questBoard!.position.set(-window.innerWidth / 2, window.innerHeight / 2);
         this._parentResource?.position.set(window.innerWidth / 2, window.innerHeight / 2);
         const sx = window.innerWidth / 1600;
@@ -151,9 +213,17 @@ export class MenuGameView implements GameView {
         const minS = sx < sy ? sx : sy
         this._backdrop?.scale.set(maxS);
         this._questBoard?.scale.set(minS);
+        if (this._topright) {
+            this._topright.x = window.innerWidth / 2 - 10;
+            this._topright.y = window.innerHeight / 2 - 10;
+        }
     }
 
     public destroy(): void {
+        this._prevMusic?.stop();
+        this._music?.stop();
+        delete this._music;
+        delete this._prevMusic;
         this._parentResource?.parent?.removeChild(this._parentResource);
     }
 }
