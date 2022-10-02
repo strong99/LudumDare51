@@ -205,8 +205,11 @@ export class BoardGameView implements PlayGameView {
 
     public update(elapsedTime: number): void {
         if (!this._gameLayer) return;
+        if (!this._viewLayer) return;
 
         this._world?.update(elapsedTime);
+
+        this._viewLayer.position.set(window.innerWidth / 2, window.innerHeight - 256);
 
         // Scroll viewport
         const scrollSpeed = 2;

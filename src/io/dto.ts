@@ -96,10 +96,12 @@ export interface OffensiveConstructionData extends NodeConstructionData {
 
 export interface CityConstructionData extends NodeConstructionData {
     type: "city";
+    alertDecreaseSpeed?: number;
 }
 
 export interface TownConstructionData extends NodeConstructionData {
     type: "town";
+    alertDecreaseSpeed?: number;
 }
 
 export interface AgentData {

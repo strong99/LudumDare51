@@ -48,6 +48,7 @@ export class KingdomPlayer implements Player {
     }
 
     public buyWarrior(construction: UnitSpawn) {
+        construction.resetAlertness();
         new Warrior(this._world, {
             id: this._world.generateId(),
             type: "warrior",
@@ -57,6 +58,7 @@ export class KingdomPlayer implements Player {
     }
 
     public buyHero(construction: UnitSpawn) {
+        construction.resetAlertness();
         new Hero(this._world, {
             id: this._world.generateId(),
             type: "hero",

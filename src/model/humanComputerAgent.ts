@@ -13,7 +13,7 @@ function randomItemFromArray<T>(array: Array<T>): T {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-function remove<T>(array: Array<T>, target: T){
+function remove<T>(array: Array<T>, target: T) {
     const idx = array.indexOf(target);
     if (idx != -1) {
         array.splice(idx, 1);
@@ -25,7 +25,7 @@ export class HumanComputerAgent implements Agent {
 
     private _nextSpawn: number = 0;
 
-    private _communities = new Array<CityConstruction|TownConstruction>();
+    private _communities = new Array<CityConstruction | TownConstruction>();
     private _cities = new Array<CityConstruction>();
     private _towns = new Array<TownConstruction>();
 
@@ -41,7 +41,7 @@ export class HumanComputerAgent implements Agent {
             if (e.construct instanceof TownConstruction) this._towns.push(e.construct);
             else if (e.construct instanceof CityConstruction) this._cities.push(e.construct);
             else return;
-            
+
             this._communities.push(e.construct);
         }
     };
@@ -53,13 +53,13 @@ export class HumanComputerAgent implements Agent {
             if (e.construct instanceof TownConstruction) remove(this._towns, e.construct);
             else if (e.construct instanceof CityConstruction) remove(this._cities, e.construct);
             else return;
-            
+
             remove(this._communities, e.construct);
         }
     }
 
     public constructor(world: World, data: HumanComputerAgentData) {
-        this._player = world.players.find(p=>p.id === data.player && p instanceof KingdomPlayer)! as KingdomPlayer;
+        this._player = world.players.find(p => p.id === data.player && p instanceof KingdomPlayer)! as KingdomPlayer;
         world.addAgent(this);
 
         this._player.world.onAddEntity(this._onAddEntity);
@@ -71,28 +71,28 @@ export class HumanComputerAgent implements Agent {
         if (this._nextSpawn > 2500) {
             this._nextSpawn -= 2500;
 
-            if (this._communities.some(c=>c.alertness > 3)) {
-                const start = this._cities[0] ?? this._towns[0];
-                
-                this._player.buyHero(start);
+            const highAlert = this._communities.find(c => c.alertness > 2);
+            if (highAlert) {
+                this._player.buyHero(highAlert);
 
                 const buyCount = 3;
-                for(let i = 0; i < buyCount; i++) {
-                    this._player.buyWarrior(start);
+                for (let i = 0; i < buyCount; i++) {
+                    this._player.buyWarrior(highAlert);
                 }
             }
-            else if (this._communities.some(c=>c.alertness > 1)) {
-                const start = this._towns[0] ?? this._cities[0];
-                
-                const buyCount = 3;
-                for(let i = 0; i < buyCount; i++) {
-                    this._player.buyWarrior(start);
+            else {
+                const mediumAlert = this._communities.find(c => c.alertness > 0.5);
+                if (mediumAlert) {
+                    const buyCount = 3;
+                    for (let i = 0; i < buyCount; i++) {
+                        this._player.buyWarrior(mediumAlert);
+                    }
                 }
-            }
-            else if (this._peasants.length < 15) {
-                const towns = this._player.world.entities.filter(e => e instanceof Node && e.construct instanceof TownConstruction) as Array<Node>;
-                const town = randomItemFromArray(towns);
-                this._player.buyPeasant(town.construct as TownConstruction);
+                else if (this._peasants.length < 15) {
+                    const towns = this._player.world.entities.filter(e => e instanceof Node && e.construct instanceof TownConstruction) as Array<Node>;
+                    const town = randomItemFromArray(towns);
+                    this._player.buyPeasant(town.construct as TownConstruction);
+                }
             }
         }
     }
