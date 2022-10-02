@@ -37,12 +37,13 @@ export class MenuGameView implements GameView {
     private _musicId?: string;
     public playMusic(audio: string) {
         if (this._musicId === audio && this._music) {
-            this._music.loop = true;
+            this._music.loop = false;
             return;
         }
 
         if (this._music) {
             this._music.loop = false;
+            this._prevMusic = this._music;
         }
         this._musicId = audio;
         this._music = Sound.from(`${audio}.ogg`);

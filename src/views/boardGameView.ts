@@ -122,17 +122,41 @@ export class BoardGameView implements PlayGameView {
         }
     }
 
+    private _musicId?: string;
     private _prevMusic?: Sound;
     private _music?: Sound;
     public playMusic(audio: string) {
+        if (this._musicId === audio && this._music) {
+            this._music.loop = true;
+            return;
+        }
+
+        this._musicId = audio;
         if (this._music) {
             this._music.loop = false;
+            this._prevMusic = this._music;
         }
         this._music = Sound.from(`${audio}.ogg`);
         this._music.loop = true;
     }
 
+    public queMusic(audio: string) {
+        if (this._musicId === audio && this._music) {
+            this._music.loop = false;
+            this._prevMusic = this._music;
+            return;
+        }
+
+        if (this._music) {
+            this._music.loop = false;
+            this._prevMusic = this._music;
+        }
+        this._music = Sound.from(`${audio}.ogg`);
+    }
+
+
     public stopMusic() {
+        delete this._musicId;
         if (this._music) {
             this._music.loop = false;
             this._prevMusic = this._music;
@@ -285,8 +309,9 @@ export class BoardGameView implements PlayGameView {
         if (!this._gameLayer) return;
         if (!this._viewLayer) return;
 
-        if (this._prevMusic?.isPlaying === false) delete this._prevMusic;
+        if (this._prevMusic?.isPlaying !== true) delete this._prevMusic;
         if (!this._prevMusic && this._music?.isPlaying === false) this._music.play();
+        if (!this._prevMusic && this._music?.isPlayable !== true) this.queMusic('happytune');
 
         this._world?.update(elapsedTime);
 

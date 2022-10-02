@@ -26,6 +26,7 @@ export class Hero implements Entity {
     public update(timeElapsed: number): void {
         this._sprite.position.set(this._model.x, this._model.y);
         this._sprite.zIndex = this._sprite.position.y + (1 - this._sprite.anchor.y) * this._sprite.texture.height + 1000;
+        this._view.queMusic("depressedTune");
     }
     
     public destroy(): void {
