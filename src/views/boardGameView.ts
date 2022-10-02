@@ -114,8 +114,6 @@ export class BoardGameView implements PlayGameView {
         this._service.viewLayer.addChild(this._viewLayer);
         this._service.viewLayer.addChild(this._uiLayer);
 
-        this._world.onAddEntity(this._onAddEntity);
-
         const loader = new Loader()
             .add('tree.png')
             .add('treeCluster.png')
@@ -127,6 +125,15 @@ export class BoardGameView implements PlayGameView {
 
         for (let i = 0; i < 3; i++) {
             loader.add(`nodeHighlighting/frame000${i}.png`);
+        }
+        for (let i = 0; i < 9; i++) {
+            loader.add(`treeConstruct/frame000${i}.png`);
+        }
+        for (let i = 0; i < 5; i++) {
+            loader.add(`lureConstruct/frame000${i}.png`);
+        }
+        for (let i = 0; i < 6; i++) {
+            loader.add(`defensiveConstruct/frame000${i}.png`);
         }
         for (let i = 1; i < 6; i++) {
             loader.add(`faraway00${i}.png`);
@@ -166,6 +173,8 @@ export class BoardGameView implements PlayGameView {
             this._gameLayer?.addChild(this._surface);
 
             this._viewLayer!.addChild(this._gameLayer);
+
+            this._world.onAddEntity(this._onAddEntity);
 
             loadState.onFinished()
         });

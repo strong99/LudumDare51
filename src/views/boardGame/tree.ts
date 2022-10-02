@@ -1,4 +1,4 @@
-import { Sprite, Text, Texture } from 'pixi.js';
+import { AnimatedSprite, Sprite, Text, Texture } from 'pixi.js';
 import { TreeConstruct as TreeModel } from '../../model/treeConstruct';
 import { Node } from './node';
 import { NodeConstruction } from './nodeConstruction';
@@ -6,14 +6,23 @@ import { NodeConstruction } from './nodeConstruction';
 export class Tree implements NodeConstruction {
     private _node: Node;
     private _model: TreeModel;
-    private _sprite: Sprite;
+    private _sprite: AnimatedSprite;
     private _txt: Text;
 
     public constructor(node: Node, model: TreeModel) {
         this._node = node;
         this._model = model;
+        
+        const textures = new Array<Texture>();
+        for (let i = 0; i < 9; i++) {
+            textures.push(Texture.from(`treeConstruct/frame000${i}.png`));
+        }
 
-        this._sprite = new Sprite(Texture.from('player.png'));
+        this._sprite = new AnimatedSprite(textures);
+        this._sprite.play();
+        this._sprite.onFrameChange = (idx) => idx === 6 && this._sprite.stop();
+        this._sprite.animationSpeed = 0.05;
+        this._sprite.loop = false;
         this._sprite.position.set(model.node.x, model.node.y);
         this._sprite.anchor.set(0.5, 0.9);
         this._sprite.zIndex = this._sprite.position.y + 1000;
@@ -35,7 +44,14 @@ export class Tree implements NodeConstruction {
         return this === model || this._model === model;
     }
 
+    private _withering = false;
     public update(timeElapsed: number): void {
+        if (!this._withering && this._model.hasDied) {
+            this._withering = true;
+            delete this._sprite.onFrameChange;
+            this._sprite.gotoAndPlay(6);
+        }
+
         this._txt.text = this.getFruitCountString();
     }
 

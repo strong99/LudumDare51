@@ -7,7 +7,8 @@ import { OnAddEntityCallback, OnRemoveEntityCallback } from "./world";
 /**
  * LD51 theme value: 10 seconds
  */
-const maxTimeSincePodConsumed = 10 * 1000;
+//const maxTimeSincePodConsumed = 10 * 1000;
+const maxTimeSincePodConsumed = 500;
 const maxTimeFruitGrowth = 10 * 1000;
 const witheringTime = 10 * 1000;
 
@@ -76,6 +77,9 @@ export class TreeConstruct extends NodeConstruction {
     }
 
     public update(elapsedTime: number): void {
+        if (this.hasDied)
+            return;
+
         this._timeSincePodConsumed += elapsedTime;
         if (this.hasDied) {
             (this._withering as number) += elapsedTime;
@@ -124,6 +128,7 @@ export class TreeConstruct extends NodeConstruction {
         else {
             console.log('started withering');
             this._withering = 0;
+            this._fruits = 0;
         }
     }
 
