@@ -49,13 +49,7 @@ export interface KingdomPlayerData extends PlayerData {
     type: "kingdom";
 }
 
-export interface PlayerControlledData extends NodeConstructionData {
-    pods: Array<number>;
-    player: number;
-    level: number;
-}
-
-export interface TreeConstructionData extends PlayerControlledData {
+export interface TreeConstructionData extends NodeConstructionData {
     type: "tree";
     timeSincePodConsumed: number;
     withering: number | false;
@@ -77,25 +71,28 @@ export interface DigestivePodData {
 export interface NodeConstructionData {
     id: number;
     type: string;
+    pods: Array<number>;
+    player: number;
+    level: number;
 }
 
-export interface LureConstructionData extends PlayerControlledData {
+export interface LureConstructionData extends NodeConstructionData {
     type: "lure";
 }
 
-export interface DefensiveConstructionData extends PlayerControlledData {
+export interface DefensiveConstructionData extends NodeConstructionData {
     type: "defensive";
 }
 
-export interface OffensiveConstructionData extends PlayerControlledData {
+export interface OffensiveConstructionData extends NodeConstructionData {
     type: "offensive";
 }
 
-export interface CityConstructionData extends PlayerControlledData {
+export interface CityConstructionData extends NodeConstructionData {
     type: "city";
 }
 
-export interface TownConstructionData extends PlayerControlledData {
+export interface TownConstructionData extends NodeConstructionData {
     type: "town";
 }
 
