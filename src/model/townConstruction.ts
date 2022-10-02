@@ -8,7 +8,7 @@ export class TownConstruction extends NodeConstruction implements UnitSpawn {
     public get id() { return this._id; }
     private _id: number;
 
-    public get alertness() { return this._alertness / 10; }
+    public get alertness() { return this._alertness; }
     private _alertness: number = 0;
 
     public constructor(node: Node, data: TownConstructionData) {
@@ -44,7 +44,7 @@ export class TownConstruction extends NodeConstruction implements UnitSpawn {
     }
     
     public update(timeElapsed: number): void {
-        this._alertness = Math.max(0, Math.min(10, this._alertness -= timeElapsed / 1000));
+        this._alertness = Math.max(0, Math.min(10, this._alertness -= timeElapsed / 10000));
     }
 
     public serialize(): TownConstructionData {

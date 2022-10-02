@@ -71,7 +71,7 @@ export class HumanComputerAgent implements Agent {
         if (this._nextSpawn > 2500) {
             this._nextSpawn -= 2500;
 
-            if (this._communities.some(c=>c.alertness > 7)) {
+            if (this._communities.some(c=>c.alertness > 3)) {
                 const start = this._cities[0] ?? this._towns[0];
                 
                 this._player.buyHero(start);
@@ -81,7 +81,7 @@ export class HumanComputerAgent implements Agent {
                     this._player.buyWarrior(start);
                 }
             }
-            else if (this._communities.some(c=>c.alertness > 3)) {
+            else if (this._communities.some(c=>c.alertness > 1)) {
                 const start = this._towns[0] ?? this._cities[0];
                 
                 const buyCount = 3;
