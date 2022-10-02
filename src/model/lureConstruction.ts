@@ -47,14 +47,12 @@ export class LureConstruction extends NodeConstruction {
                     type: "defensive",
                     id: this._node.world.generateId(),
                     level: 1,
-                    pods: [],
                     player: this.player.id
                 }) :
                 new OffensiveConstruction(this._node, {
                     type: "offensive",
                     id: this._node.world.generateId(),
                     level: 1,
-                    pods: [],
                     player: this.player.id
                 })
             );
@@ -90,7 +88,6 @@ export class LureConstruction extends NodeConstruction {
             id: this._id,
             type: "lure",
             level: this.level,
-            pods: [],
             player: this._player.id
         };
     }

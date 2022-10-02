@@ -2,7 +2,6 @@ import { World } from "./world";
 import { Interaction, Player } from "./player";
 import { KingdomPlayerData, PlayerDataTypes } from "../io/dto";
 import { Entity } from "./entity";
-import { Human } from "./human";
 import { UnitSpawn } from "./unitSpawn";
 import { Peasant } from "./peasant";
 import { Warrior } from "./warrior";

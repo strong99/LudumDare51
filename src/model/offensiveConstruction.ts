@@ -50,7 +50,6 @@ export class OffensiveConstruction extends NodeConstruction {
             id: this._id,
             type: "offensive",
             level: this.level,
-            pods: [],
             player: this._player.id
         };
     }

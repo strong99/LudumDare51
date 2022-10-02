@@ -7,6 +7,7 @@ import * as EntityFactory from "./entityFactory";
 import * as PlayerFactory from "./playerFactory";
 import * as AgentFactory from "./agentFactory";
 import { Agent } from "./agent";
+import { DigestivePod } from "./digestivePod";
 
 export type OnAddEntityCallback = (e: Entity) => void;
 export type OnRemoveEntityCallback = (e: Entity) => void;
@@ -27,7 +28,7 @@ export class World {
     public get entities(): ReadonlyArray<Entity> { return this._entities; }
     public get nodes(): ReadonlyArray<Node> { return this._entities.filter(e=>e instanceof Node) as Array<Node>; }
     public get players() { return this._players; }
-    public get digistivePods() { return this._entities.find(e => e instanceof Node && e.construct && e.construct.pods.length > 0); }
+    public get digistivePods() { return this._entities.filter(e => e instanceof DigestivePod); }
     public get node() { return this._entities.find(e => e instanceof Node); }
     public get human() { return this._entities.find(e => e instanceof Human); }
 
@@ -198,5 +199,13 @@ export class World {
 
     public onRemoveEntity(onRemoveEntityCallback: OnRemoveEntityCallback) {
         this._onRemoveEntityCallbacks.push(onRemoveEntityCallback);
+    }
+
+    public offRemoveEntity(onRemoveEntityCallback: OnRemoveEntityCallback) {
+        const idx = this._onRemoveEntityCallbacks.indexOf(onRemoveEntityCallback);
+        if (idx == -1) {
+            throw new Error("Callback is not bound");
+        }
+        this._onRemoveEntityCallbacks.splice(idx, 1);
     }
 }

@@ -9,9 +9,6 @@ export abstract class NodeConstruction {
     public get player() { return this._player; } 
     protected _player!: Player;
 
-    public get pods() { return this._pods; }
-    protected _pods = new Array<DigestivePod>();
-
     public abstract canUpgrade(type: string): boolean;
     public abstract tryUpgrade(type: string): boolean;
     public abstract upgradeRequirement(type: string): []|null;

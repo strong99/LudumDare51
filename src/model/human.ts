@@ -12,6 +12,7 @@ export abstract class Human implements Entity {
     public get y() { return this._y; }
     protected _y: number;
 
+    public get world(): World { return this._world; }
     protected _world: World;
 
     public constructor(world: World, data: HumanData) {

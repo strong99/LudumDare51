@@ -86,14 +86,17 @@ export class Peasant extends Human {
             const dy = (next.y - this.y) * 2;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < 32 && (next.construct instanceof CityConstruction || next.construct instanceof TownConstruction)) {
-                this._carrying = false;
-            }
-
             // If peasant comes close to a sub-node continue to the next
             if ((this._path.length > 1 && distance < 128) ||
                 distance < 32) {
                 this._path.shift();
+
+                if (distance < 32 && (next.construct instanceof CityConstruction || next.construct instanceof TownConstruction)) {
+                    this._carrying = false;
+                    if (this._task === PeasantTask.Alert) {
+                        next.construct.alert();
+                    }
+                }
 
                 if (harvestable && !this._carrying) {
                     this._carrying = (next.construct as LureConstruction).tryPick();

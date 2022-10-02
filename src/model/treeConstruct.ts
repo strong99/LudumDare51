@@ -2,7 +2,7 @@ import { TreeConstructionData } from "../io/dto";
 import { DigestivePod } from "./digestivePod";
 import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
-import { OnAddEntityCallback } from "./world";
+import { OnAddEntityCallback, OnRemoveEntityCallback } from "./world";
 
 /**
  * LD51 theme value: 10 seconds
@@ -27,13 +27,26 @@ export class TreeConstruct extends NodeConstruction {
 
     private _fruitsSpawnInterval: number = 0;
 
+    private _pods = new Array<DigestivePod>();
+
     public get hasDied() { return this._withering !== false; }
-    public get willDie() { return this.timeToConsumePod < 0 && this._pods.length == 0; }
+    public get willDie() { return this.timeToConsumePod < 0 && this._node.world.digistivePods.length == 0; }
     public get shouldConsume() { return this.timeToConsumePod < 0; }
     public get shouldConsumePercentage() { return this.timeToConsumePod / maxTimeSincePodConsumed; }
     public get timeToConsumePod() { return maxTimeSincePodConsumed - this._timeSincePodConsumed; }
     public get timeSincePodConsumed() { return this._timeSincePodConsumed; }
     private _timeSincePodConsumed = 0;
+    
+    private _onAddEntity: OnAddEntityCallback = e => {
+        if (e instanceof DigestivePod) this._pods.push(e);
+    };
+
+    private _onRemoveEntity: OnRemoveEntityCallback = e => {
+        if (e instanceof DigestivePod) { 
+            const idx = this._pods.indexOf(e);
+            if (idx != -1) this._pods.splice(idx);
+        }
+    };
 
     public constructor(node: Node, data: TreeConstructionData) {
         super();
@@ -45,19 +58,8 @@ export class TreeConstruct extends NodeConstruction {
         this._timeSincePodConsumed = data.timeSincePodConsumed;
         this._withering = data.withering;
 
-        const waitingOnPods = [...data.pods];
-        const listenForPods: OnAddEntityCallback = (e) => {
-            // Find pods
-            if (waitingOnPods.includes(e.id) && e instanceof DigestivePod) {
-                waitingOnPods.splice(waitingOnPods.indexOf(e.id), 1);
-                this._pods.push(e);
-            }
-
-            if (waitingOnPods.length == 0) {
-                this._node.world.onRemoveEntity(listenForPods);
-            }
-        };
-        this._node.world.onAddEntity(listenForPods);
+        this._node.world.onAddEntity(this._onAddEntity);
+        this._node.world.onRemoveEntity(this._onRemoveEntity);
 
         const player = this._node.world.players.find(p=>p.id === data.player);
         if (!player) throw new Error(`Player ${data.player} not found for construct`);
@@ -94,7 +96,6 @@ export class TreeConstruct extends NodeConstruction {
             id: this.id,
             type: "tree",
             player: this._player.id,
-            pods: this._pods.map(p=>p.id),
             timeSincePodConsumed: this.timeSincePodConsumed,
             withering: this._withering,
             level: this._level
@@ -117,6 +118,7 @@ export class TreeConstruct extends NodeConstruction {
         const podToConsume = this._pods.shift();
         if (podToConsume) {
             //++this._buildpoints;
+            podToConsume.destroy();
         }
         else {
             this._withering = 0;
@@ -124,6 +126,7 @@ export class TreeConstruct extends NodeConstruction {
     }
 
     public destroy(): void {
-        
+        this._node.world.offAddEntity(this._onAddEntity);
+        this._node.world.offRemoveEntity(this._onRemoveEntity);        
     }
 }

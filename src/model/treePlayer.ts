@@ -59,7 +59,6 @@ export class TreePlayer implements Player {
                 type: "lure",
                 id: node.world.generateId(),
                 level: 1,
-                pods: [],
                 player: this.id
             });
         }
@@ -72,14 +71,12 @@ export class TreePlayer implements Player {
                     type: "defensive",
                     id: node.world.generateId(),
                     level: 1,
-                    pods: [],
                     player: this.id
                 }) :
                 new OffensiveConstruction(node, {
                     type: "offensive",
                     id: node.world.generateId(),
                     level: 1,
-                    pods: [],
                     player: this.id
                 })
             );
@@ -140,12 +137,13 @@ export class TreePlayer implements Player {
         toBeTrapped.destroy();
 
         if (node.construct instanceof LureConstruction) {
-            node.construct.pods.push(new DigestivePod(node, {
+            new DigestivePod(node.world, {
+                type: "digestivePod",
                 age: 0,
                 id: this._world.generateId(),
-                x: Math.random() * 128,
-                y: Math.random() * 64 + 25,
-            }));
+                x: Math.random() * 128 + node.x,
+                y: Math.random() * 64 + 25 + node.y,
+            });
         }
         return true;
     }

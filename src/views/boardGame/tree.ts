@@ -22,7 +22,7 @@ export class Tree implements NodeConstruction {
         this._txt.anchor.set(0.5, 0.5);
         this._sprite.addChild(this._txt);
 
-        if (!this._node.gameLayer)throw new Error();
+        if (!this._node.gameLayer) throw new Error();
 
         this._node.gameLayer.addChild(this._sprite);
     }
@@ -34,7 +34,7 @@ export class Tree implements NodeConstruction {
     public is(model: any): boolean {
         return this === model || this._model === model;
     }
-    
+
     public update(timeElapsed: number): void {
         this._txt.text = this.getFruitCountString();
     }

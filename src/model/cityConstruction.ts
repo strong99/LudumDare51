@@ -10,6 +10,9 @@ export class CityConstruction extends NodeConstruction implements UnitSpawn {
     public get id() { return this._id; }
     private _id: number;
 
+    public get alertness() { return this._alertness / 10; }
+    private _alertness: number = 0;
+
     public constructor(node: Node, data: CityConstructionData) {
         super();
 
@@ -20,6 +23,10 @@ export class CityConstruction extends NodeConstruction implements UnitSpawn {
         const player = this._node.world.players.find(p=>p.id === data.player);
         if (!player) throw new Error(`Player ${data.player} not found for construct`);
         this._player = player;
+    }
+
+    public alert() {
+        this._alertness++;
     }
 
     public canUpgrade(type: string): boolean {
@@ -35,7 +42,7 @@ export class CityConstruction extends NodeConstruction implements UnitSpawn {
     }
     
     public update(timeElapsed: number): void {
-        
+        this._alertness = Math.max(0, Math.min(10, this._alertness -= timeElapsed / 1000));
     }
 
     public serialize(): CityConstructionData {
@@ -43,7 +50,6 @@ export class CityConstruction extends NodeConstruction implements UnitSpawn {
             id: this._id,
             type: "city",
             level: this.level,
-            pods: [],
             player: this._player.id
         };
     }

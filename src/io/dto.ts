@@ -1,5 +1,5 @@
 export type HumanDataTypes = PeasantData | WarriorData | HeroData;
-export type EntityDataTypes = HumanDataTypes | NodeData;
+export type EntityDataTypes = HumanDataTypes | NodeData | DigestivePodData;
 export type NodeConstructionDataTypes = TreeConstructionData | LureConstructionData | DefensiveConstructionData | OffensiveConstructionData | TownConstructionData | CityConstructionData;
 export type PlayerDataTypes = TreePlayerData | KingdomPlayerData;
 export type AgentDataTypes = HumanComputerAgentData;
@@ -61,8 +61,8 @@ export interface NodeData extends EntityData {
     construction?: NodeConstructionDataTypes;
 }
 
-export interface DigestivePodData {
-    id: number;
+export interface DigestivePodData extends EntityData {
+    type: "digestivePod";
     x: number;
     y: number;
     age: number;
@@ -71,7 +71,6 @@ export interface DigestivePodData {
 export interface NodeConstructionData {
     id: number;
     type: string;
-    pods: Array<number>;
     player: number;
     level: number;
 }

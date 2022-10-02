@@ -1,4 +1,5 @@
 import { EntityData, EntityDataTypes } from "../io/dto";
+import { DigestivePod } from "./digestivePod";
 import { Entity } from "./entity";
 import { Hero } from "./hero";
 import { Node } from "./node";
@@ -27,6 +28,9 @@ export function Create(world: World, data: EntityData): Entity {
     }
     else if (typedData.type == "node") {
         createdEntity = new Node(world, typedData);
+    }
+    else if (typedData.type == "digestivePod") {
+        createdEntity = new DigestivePod(world, typedData);
     }
     else {
         throw new Error(`Unsupported entity type: ${data.type}`);

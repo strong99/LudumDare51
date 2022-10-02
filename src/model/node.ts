@@ -1,4 +1,5 @@
 import { NodeData } from "../io/dto";
+import { DigestivePod } from "./digestivePod";
 import { Entity } from "./entity";
 import { NodeConstruction } from "./nodeConstruction";
 import * as NodeConstructionFactory from "./nodeConstructionFactory";

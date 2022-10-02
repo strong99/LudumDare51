@@ -32,7 +32,6 @@ export const DemoWorld: WorldData = {
                 player: 9,
                 type: "tree",
                 level: 1,
-                pods: [],
                 withering: false,
                 timeSincePodConsumed: 0
             }
@@ -95,7 +94,6 @@ export const DemoWorld: WorldData = {
             construction: {
                 id: 16,
                 player: 10,
-                pods: [],
                 type: "town",
                 level: 1
             }
@@ -123,7 +121,6 @@ export const DemoWorld: WorldData = {
             construction: {
                 id: 16,
                 player: 10,
-                pods: [],
                 type: "city",
                 level: 1
             }

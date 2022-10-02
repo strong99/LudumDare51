@@ -51,7 +51,6 @@ export class DefensiveConstruction extends NodeConstruction {
             id: this._id,
             type: "defensive",
             level: this.level,
-            pods: [],
             player: this._player.id
         };
     }
