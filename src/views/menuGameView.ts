@@ -1,4 +1,4 @@
-import { Application, Container, Loader, Sprite, Text } from "pixi.js";
+import { AnimatedSprite, Application, Container, Loader, Sprite, SpritesheetLoader, Text, Texture } from "pixi.js";
 import { DemoWorld } from "../demo/DemoWorld";
 import { World } from "../model/world";
 import { GameView } from "./gameView";
@@ -18,7 +18,9 @@ export class MenuGameView implements GameView {
     private _background?: Sprite;
     private _foreground?: Sprite;
     private _questBoard?: Sprite;
-    
+
+    private _rootGrabbingTextures?: Array<Texture>;
+
     private _startButton?: Sprite;
     private _continueButton?: Sprite;
 
@@ -41,12 +43,27 @@ export class MenuGameView implements GameView {
             .add('startButton.png')
             .add('menu.png');
 
+        for (let i = 0; i < 10; ++i) {
+            loader.add(`rootsGrabbing/frame000${i}.png`);
+        }
+
         const loadState = new LoadState();
         let i = 0;
         loader.onProgress.add((l, r) => loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
         loader.onComplete.add((r) => {
             if (!this._parentResource) {
                 throw new Error("Layer not loaded");
+            }
+
+            this._rootGrabbingTextures ??= [];
+            this._rootGrabbingTextures.length = 0;
+            for(let i = 0; i < 10; ++i) {
+                const frame = `rootsGrabbing/frame000${i}.png`;
+                const texture = r.resources[frame].texture;
+                if (!texture) {
+                    throw new Error("Root Grabbing animation frame texture not loaded");
+                }
+                this._rootGrabbingTextures.push(texture);
             }
 
             this._backdrop = new Container();
@@ -65,19 +82,19 @@ export class MenuGameView implements GameView {
             this._startButton.anchor.set(0.5, 0.5);
             this._startButton.position.set(153, -120);
             this._startButton.interactive = true;
-            this._startButton.on('click', ()=>this.onNew());
-            this._startButton.on('pointerover', ()=>this._startButton?.scale.set(1.2));
-            this._startButton.on('pointerout', ()=>this._startButton?.scale.set(1));
+            this._startButton.on('click', () => this.grabButton(this._startButton!, ()=>this.onNew()));
+            this._startButton.on('pointerover', () => this._startButton?.anchor.set(0.5, 0.35));
+            this._startButton.on('pointerout', () => this._startButton?.anchor.set(0.5, 0.5));
             this._questBoard.addChild(this._startButton);
 
-            if (true || this._activeWorld || this._viewService.saveManager.hasQuickSave()) {
+            if (this._activeWorld || this._viewService.saveManager.hasQuickSave()) {
                 this._continueButton = new Sprite(r.resources['continueButton.png'].texture);
                 this._continueButton.anchor.set(0.5, 0.5);
                 this._continueButton.position.set(276, -116);
                 this._continueButton.interactive = true;
-                this._continueButton.on('click', ()=>this.onContinue());
-                this._continueButton.on('pointerover', ()=>this._continueButton?.scale.set(1.2));
-                this._continueButton.on('pointerout', ()=>this._continueButton?.scale.set(1));
+                this._continueButton.on('click', () => this.grabButton(this._continueButton!, ()=>this.onContinue()));
+                this._continueButton.on('pointerover', () => this._continueButton?.anchor.set(0.5,0.35));
+                this._continueButton.on('pointerout', () => this._continueButton?.anchor.set(0.5,0.5));
                 this._questBoard.addChild(this._continueButton);
             }
 
@@ -85,6 +102,34 @@ export class MenuGameView implements GameView {
         });
         loader.load();
         return loadState;
+    }
+
+    private grabButton(sprite: Sprite, callback: ()=>void) {
+        if (!this._rootGrabbingTextures) {
+            throw new Error("Grabbing root textures not loaded");
+        }
+
+        if (!this._questBoard) {
+            throw new Error("Questboard not loaded");
+        }
+        sprite.interactive = false;
+
+        const roots = new AnimatedSprite(this._rootGrabbingTextures);
+        roots.onComplete = ()=>{
+            setTimeout(()=>callback(), 500);
+            roots.destroy();
+        };
+        roots.onFrameChange = (frameIdx) => {
+            if (frameIdx == 6) {
+                sprite.visible = false;
+            }
+        };
+        roots.play();
+        roots.loop = false;
+        roots.animationSpeed = 0.4;
+        roots.anchor.set(0.4, 0.4);
+        roots.position.set(sprite.x, sprite.y);
+        this._questBoard.addChild(roots);
     }
 
     private onNew() {

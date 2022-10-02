@@ -56,7 +56,7 @@ export class GameViewService {
     public constructor(pixiApp: Application) {
         this._pixi = pixiApp;
         this._pixi.stage.addChild(this._viewLayer);
-        this.swapView(new MenuGameView(this, this._pixi));
+        this.swapViewToMenu();
     }
 
     /**
