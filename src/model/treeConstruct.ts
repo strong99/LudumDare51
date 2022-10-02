@@ -63,6 +63,12 @@ export class TreeConstruct extends NodeConstruction {
         this._player = player;
     }
 
+    public tryWither() {
+        if (this._fruits == 0) {
+            this._withering = 0;
+        }
+    }
+
     public tryPick(): boolean {
         if (this._fruits < 0) {
             return false;

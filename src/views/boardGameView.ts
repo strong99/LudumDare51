@@ -147,11 +147,13 @@ export class BoardGameView implements PlayGameView {
             return;
         }
 
+        this._musicId = audio;
         if (this._music) {
             this._music.loop = false;
             this._prevMusic = this._music;
         }
         this._music = Sound.from(`${audio}.ogg`);
+        this._music.pause();
     }
 
 
@@ -311,7 +313,7 @@ export class BoardGameView implements PlayGameView {
 
         if (this._prevMusic?.isPlaying !== true) delete this._prevMusic;
         if (!this._prevMusic && this._music?.isPlaying === false) this._music.play();
-        if (!this._prevMusic && this._music?.isPlayable !== true) this.queMusic('happytune');
+        else if (!this._prevMusic && this._music?.isPlayable !== true) this.queMusic('happytune');
 
         this._world?.update(elapsedTime);
 

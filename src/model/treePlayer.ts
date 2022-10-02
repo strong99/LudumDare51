@@ -23,7 +23,7 @@ export class TreePlayer implements Player {
     public get world(): World { return this._world; }
     private _world: World;
 
-    public get buildPoints() { return this._world.nodes.filter(p=>p.construct instanceof TreeConstruct).map(p=>(p.construct as TreeConstruct).fruits).reduce((p, n)=>p + n); }
+    public get buildPoints() { return [...this._world.nodes.filter(p=>p.construct instanceof TreeConstruct).map(p=>(p.construct as TreeConstruct).fruits),0].reduce((p, n)=>p + n); }
     public set buildPoints(value) { 
         const diff = value - this.buildPoints;
         let toDo = Math.abs(diff);

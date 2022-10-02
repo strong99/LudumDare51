@@ -56,6 +56,9 @@ export class Warrior extends Human {
                         if (nearestNode.construct instanceof TreeConstruct && nearestNode.construct.fruits > 0) {
                             nearestNode.construct.tryPick();
                         }
+                        else if (nearestNode.construct instanceof TreeConstruct) {
+                            nearestNode.construct.tryWither();
+                        }
                         else if (nearestNode.construct) {
                             nearestNode.construct = undefined;
                         }
