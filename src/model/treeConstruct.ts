@@ -117,10 +117,12 @@ export class TreeConstruct extends NodeConstruction {
     private tryConsume() {
         const podToConsume = this._pods.shift();
         if (podToConsume) {
-            this._timeSincePodConsumed += maxTimeSincePodConsumed;
+            this._timeSincePodConsumed -= maxTimeSincePodConsumed;
+            console.log('consumed pod');
             podToConsume.destroy();
         }
         else {
+            console.log('started withering');
             this._withering = 0;
         }
     }

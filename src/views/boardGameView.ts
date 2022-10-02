@@ -10,6 +10,7 @@ import { Node as NodeModel } from "../model/node";
 import { NodeConnection } from "./boardGame/nodeConnection";
 import { Player as PlayerModel } from "../model/player";
 import { TreePlayer } from "../model/treePlayer";
+import { GameOverDialog } from "./boardGame/gameOverDialog";
 
 export class BoardGameView implements PlayGameView {
     private _service: GameViewService;
@@ -21,6 +22,9 @@ export class BoardGameView implements PlayGameView {
     
     public get viewLayer() { return this._viewLayer; }
     private _viewLayer?: Container;
+    
+    public get uiLayer() { return this._uiLayer; }
+    private _uiLayer?: Container;
 
     public get player(): PlayerModel { return this._player; }
     private _player: PlayerModel;
@@ -31,6 +35,8 @@ export class BoardGameView implements PlayGameView {
     private _minX = -600
     private _maxX = 1300;
     private _scrollViewport = 0;
+
+    private _gameOverDialog?: Entity;
 
     private _onAddEntity: OnAddEntityCallback = e => {
         if (e instanceof NodeModel) {
@@ -84,8 +90,10 @@ export class BoardGameView implements PlayGameView {
     public prepare(): LoadStateListener {
         this._gameLayer = new Container();
         this._viewLayer = new Container();
+        this._uiLayer = new Container();
         this._viewLayer.position.set(window.innerWidth / 2, window.innerHeight - 256);
         this._service.viewLayer.addChild(this._viewLayer);
+        this._service.viewLayer.addChild(this._uiLayer);
         this._viewLayer.addChild(this._gameLayer);
 
         this._world.onAddEntity(this._onAddEntity);
@@ -127,11 +135,9 @@ export class BoardGameView implements PlayGameView {
         const maxX = this._maxX - hw;
         const minX = this._minX + hw;
         if (this._scrollViewport == -1 && -this._gameLayer.x > minX) {
-            console.log('<', -this._gameLayer.x, minX);
             this._gameLayer.x = Math.min(-minX, this._gameLayer.x + elapsedTime * scrollSpeed);
         }
         else if (this._scrollViewport == 1 && -this._gameLayer.x < maxX) {
-            console.log('>', -this._gameLayer.x, maxX);
             this._gameLayer.x = Math.max(-maxX, this._gameLayer.x - elapsedTime * scrollSpeed);
         }
 
@@ -141,11 +147,18 @@ export class BoardGameView implements PlayGameView {
         }
 
         this._gameLayer.children.sort((a,b)=>a.zIndex-b.zIndex);
+
+        if (this._player.isDead && !this._gameOverDialog) {
+            this._gameOverDialog = new GameOverDialog(this, this._player);
+        }
+        this._gameOverDialog?.update(elapsedTime);
     }
 
     public destroy(): void {
         window.removeEventListener('pointermove', this._onPointerMove);
         this._gameLayer?.parent?.removeChild(this._gameLayer);
+        this._viewLayer?.parent?.removeChild(this._viewLayer);
+        this._uiLayer?.parent?.removeChild(this._uiLayer);
         this._world.offAddEntity(this._onAddEntity);
     }
 }
