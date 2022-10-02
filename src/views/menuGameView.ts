@@ -17,6 +17,10 @@ export class MenuGameView implements GameView {
     private _sky?: Sprite;
     private _background?: Sprite;
     private _foreground?: Sprite;
+    private _questBoard?: Sprite;
+    
+    private _startButton?: Sprite;
+    private _continueButton?: Sprite;
 
     public constructor(viewService: GameViewService, pixi: Application, world?: World) {
         this._pixi = pixi;
@@ -32,6 +36,9 @@ export class MenuGameView implements GameView {
         this._parentResource.visible = true;
 
         const loader = new Loader()
+            .add('continueButton.png')
+            .add('questBoard.png')
+            .add('startButton.png')
             .add('menu.png');
 
         const loadState = new LoadState();
@@ -49,31 +56,30 @@ export class MenuGameView implements GameView {
             this._backdrop.addChild(this._foreground);
             this._parentResource.addChild(this._backdrop);
 
-            const titleTxt = new Text("The Blood Tree", { fontSize: 40 });
-            titleTxt.x = 0;
-            titleTxt.y = -100;
-            titleTxt.anchor.set(0.5);
-            this._parentResource.addChild(titleTxt);
+            this._questBoard = new Sprite(r.resources['questBoard.png'].texture);
+            this._questBoard.anchor.set(0, 1);
+            this._questBoard.position.set(-window.innerWidth / 2, window.innerHeight / 2);
+            this._parentResource.addChild(this._questBoard);
 
-            const startBtn = new Text("start new game");
-            startBtn.x = 0;
-            startBtn.y = -50;
-            startBtn.anchor.set(0.5);
-            startBtn.interactive = true;
-            startBtn.on('click', () => this.onNew());
-            this._parentResource.addChild(startBtn);
+            this._startButton = new Sprite(r.resources['startButton.png'].texture);
+            this._startButton.anchor.set(0.5, 0.5);
+            this._startButton.position.set(153, -120);
+            this._startButton.interactive = true;
+            this._startButton.on('click', ()=>this.onNew());
+            this._startButton.on('pointerover', ()=>this._startButton?.scale.set(1.2));
+            this._startButton.on('pointerout', ()=>this._startButton?.scale.set(1));
+            this._questBoard.addChild(this._startButton);
 
-            // To do: Or when there's a save game available to load
-            if (this._activeWorld) {
-                const continueBtn = new Text("continue");
-                continueBtn.x = 0;
-                continueBtn.y = 50;
-                continueBtn.anchor.set(0.5);
-                continueBtn.interactive = true;
-                continueBtn.on('click', () => this.onContinue());
-                this._parentResource.addChild(continueBtn);
+            if (true || this._activeWorld || this._viewService.saveManager.hasQuickSave()) {
+                this._continueButton = new Sprite(r.resources['continueButton.png'].texture);
+                this._continueButton.anchor.set(0.5, 0.5);
+                this._continueButton.position.set(276, -116);
+                this._continueButton.interactive = true;
+                this._continueButton.on('click', ()=>this.onContinue());
+                this._continueButton.on('pointerover', ()=>this._continueButton?.scale.set(1.2));
+                this._continueButton.on('pointerout', ()=>this._continueButton?.scale.set(1));
+                this._questBoard.addChild(this._continueButton);
             }
-
 
             loadState.onFinished()
         });
@@ -95,8 +101,10 @@ export class MenuGameView implements GameView {
         this._parentResource?.position.set(window.innerWidth / 2, window.innerHeight / 2);
         const sx = window.innerWidth / 1600;
         const sy = window.innerHeight / 1080;
-        const s = sx > sy ? sx : sy
-        this._backdrop?.scale.set(s);
+        const maxS = sx > sy ? sx : sy
+        const minS = sx < sy ? sx : sy
+        this._backdrop?.scale.set(maxS);
+        this._questBoard?.scale.set(minS);
     }
 
     public destroy(): void {
