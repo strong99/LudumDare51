@@ -24,6 +24,7 @@ export class Peasant extends Human {
     private _path?: Array<Node>;
     private _task: PeasantTask = PeasantTask.Wander;
     private _pathfinder = new NodePathfinder();
+    private _carrying = false;
 
     public constructor(world: World, data: PeasantData) {
         super(world, data);
@@ -39,7 +40,7 @@ export class Peasant extends Human {
                 this._task = PeasantTask.Socialize;
             }
             else if (this._task === PeasantTask.Socialize) {
-                this._task = PeasantTask.Forage;
+                this._task = this._carrying ? PeasantTask.Socialize : PeasantTask.Forage;
             }
             else if (this._task === PeasantTask.Forage) {
                 this._task = PeasantTask.Socialize;
@@ -85,13 +86,17 @@ export class Peasant extends Human {
             const dy = (next.y - this.y) * 2;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
+            if (distance < 32 && (next.construct instanceof CityConstruction || next.construct instanceof TownConstruction)) {
+                this._carrying = false;
+            }
+
             // If peasant comes close to a sub-node continue to the next
             if ((this._path.length > 1 && distance < 128) ||
                 distance < 32) {
                 this._path.shift();
 
-                if (harvestable) {
-                    (next.construct as LureConstruction).tryPick();
+                if (harvestable && !this._carrying) {
+                    this._carrying = (next.construct as LureConstruction).tryPick();
                 }
                 else if (this._task == PeasantTask.Alert && (next.construct instanceof CityConstruction || next.construct instanceof TownConstruction)) {
                     this._task = PeasantTask.Wander;
