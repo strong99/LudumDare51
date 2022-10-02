@@ -9,7 +9,7 @@ export class LureConstruction implements NodeConstruction {
     private _node: Node;
     private _model: LureConstructionModel;
     private _sprite: AnimatedSprite;
-    private _txt: Text;
+    //private _txt: Text;
 
     public constructor(node: Node, model: LureConstructionModel) {
         this._node = node;
@@ -29,9 +29,9 @@ export class LureConstruction implements NodeConstruction {
         this._sprite.anchor.set(0.5, 0.9);
         this._sprite.zIndex = this._sprite.position.y + 1000;
 
-        this._txt = new Text(this.getFruitCountString(), { fontSize: 20 });
-        this._txt.anchor.set(0.5, 0.5);
-        this._sprite.addChild(this._txt);
+        //this._txt = new Text(this.getFruitCountString(), { fontSize: 20 });
+        //this._txt.anchor.set(0.5, 0.5);
+        //this._sprite.addChild(this._txt);
 
         if (!this._node.gameLayer) throw new Error();
 
@@ -40,9 +40,9 @@ export class LureConstruction implements NodeConstruction {
         new FruitMoveTo(node, model);
     }
 
-    private getFruitCountString() {
-        return `${this._model.fruits}/10 fruit`;
-    }
+    //private getFruitCountString() {
+    //    return `${this._model.fruits}/10 fruit`;
+    //}
 
     public is(model: any): boolean {
         return this._model === model || model === this;
@@ -53,7 +53,7 @@ export class LureConstruction implements NodeConstruction {
             this._sprite.gotoAndStop(this._model.level + 1);
             new FruitMoveTo(this._node, this._model);
         }
-        this._txt.text = this.getFruitCountString();
+        //this._txt.text = this.getFruitCountString();
     }
 
     public destroy(): void {

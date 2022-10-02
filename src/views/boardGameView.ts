@@ -43,6 +43,10 @@ export class BoardGameView implements PlayGameView {
 
     private _gameOverDialog?: Entity;
 
+    public goToMenu() {
+        this._service.swapViewToMenu();
+    }
+
     private _onAddEntity: OnAddEntityCallback = e => {
         if (e instanceof NodeModel) {
             // try draw connection

@@ -27,23 +27,40 @@ export class GameOverDialog implements Entity {
         this._txt.visible = false;
         this._layer.addChild(this._txt);
 
+        const t = new Text("Press any key to continue");
+        t.position.y = 80;
+        t.anchor.set(0.5,0.5);
+        this._txt.addChild(t);
+
         this._fallingPaper = new Sprite(Texture.from('fallingPaper.png'));
         this._fallingPaper.position.y = -window.innerHeight / 2;
         this._fallingPaper.anchor.set(0.5,0.5);
         this._layer.addChild(this._fallingPaper);
     }
 
+    private _goToMenu = ()=>{
+        this._view.goToMenu();
+        window.removeEventListener('click', this._goToMenu);
+        window.removeEventListener('keypress', this._goToMenu);
+    };
+
     public update(timeElapsed: number): void {
         this._fallingPaper.position.y += timeElapsed / 20;
         this._fallingPaper.position.x += Math.cos(this._fallingPaper.position.y / 40) * 5;
         this._fallingPaper.rotation = -Math.sin(this._fallingPaper.position.y / 40);
 
-        this._txt.visible = this._fallingPaper.position.y > 0;
+        if (this._fallingPaper.position.y > 0 && !this._txt.visible) {
+            this._txt.visible = this._fallingPaper.position.y > 0;
+            window.addEventListener('click', this._goToMenu);
+            window.addEventListener('keypress', this._goToMenu);
+        }
 
         this._layer.position.set(window.innerWidth / 2, window.innerHeight / 2);
     }
 
     public destroy(): void {
         this._layer?.parent?.removeChild(this._layer);
+        window.removeEventListener('click', this._goToMenu);
+        window.removeEventListener('keypress', this._goToMenu);
     }
 }

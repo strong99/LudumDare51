@@ -7,7 +7,7 @@ export class Tree implements NodeConstruction {
     private _node: Node;
     private _model: TreeModel;
     private _sprite: AnimatedSprite;
-    private _txt: Text;
+    //private _txt: Text;
     private _fruits = new Array<Sprite>();
 
     public constructor(node: Node, model: TreeModel) {
@@ -28,18 +28,18 @@ export class Tree implements NodeConstruction {
         this._sprite.anchor.set(0.5, 0.9);
         this._sprite.zIndex = this._sprite.position.y + 1000;
 
-        this._txt = new Text(this.getFruitCountString(), { fontSize: 20 });
-        this._txt.anchor.set(0.5, 0.5);
-        this._sprite.addChild(this._txt);
+        //this._txt = new Text(this.getFruitCountString(), { fontSize: 20 });
+        //this._txt.anchor.set(0.5, 0.5);
+        //this._sprite.addChild(this._txt);
 
         if (!this._node.gameLayer) throw new Error();
 
         this._node.gameLayer.addChild(this._sprite);
     }
 
-    private getFruitCountString() {
-        return `${this._model.fruits}/20 fruit`;
-    }
+    //private getFruitCountString() {
+    //    return `${this._model.fruits}/20 fruit`;
+    //}
 
     public is(model: any): boolean {
         return this === model || this._model === model;
@@ -53,7 +53,7 @@ export class Tree implements NodeConstruction {
             this._sprite.gotoAndPlay(6);
         }
 
-        this._txt.text = this.getFruitCountString();
+        //this._txt.text = this.getFruitCountString();
 
         if (this._model.fruits > this._fruits.length) {
             for(let i = this._fruits.length; i < this._model.fruits; i++) {
