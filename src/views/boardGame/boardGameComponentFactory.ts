@@ -1,5 +1,6 @@
 import { Entity as EntityModel } from "../../model/entity";
 import { Node as NodeModel } from "../../model/node";
+import { Projectile as ProjectileModel } from "../../model/projectile";
 import { DigestivePod as DigestivePodModel } from "../../model/digestivePod";
 import { Peasant as PeasantModel } from "../../model/peasant";
 import { Warrior as WarriorModel } from "../../model/warrior";
@@ -11,6 +12,7 @@ import { Peasant } from "./peasant";
 import { Warrior } from "./warrior";
 import { Hero } from "./hero";
 import { DigestivePod } from "./digestivePod";
+import { Projectile } from "./projectile";
 
 export function TryCreate(v: BoardGameView, m: EntityModel): Entity|null {
     let e: Entity|null = null;
@@ -19,6 +21,9 @@ export function TryCreate(v: BoardGameView, m: EntityModel): Entity|null {
     }
     else if (m instanceof DigestivePodModel) {
         e = new DigestivePod(v, m);
+    }
+    else if (m instanceof ProjectileModel) {
+        e = new Projectile(v, m);
     }
     else if (m instanceof PeasantModel) {
         e = new Peasant(v, m);

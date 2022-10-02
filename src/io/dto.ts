@@ -1,5 +1,5 @@
 export type HumanDataTypes = PeasantData | WarriorData | HeroData;
-export type EntityDataTypes = HumanDataTypes | NodeData | DigestivePodData;
+export type EntityDataTypes = HumanDataTypes | NodeData | DigestivePodData | ProjectileData;
 export type NodeConstructionDataTypes = TreeConstructionData | LureConstructionData | DefensiveConstructionData | OffensiveConstructionData | TownConstructionData | CityConstructionData;
 export type PlayerDataTypes = TreePlayerData | KingdomPlayerData;
 export type AgentDataTypes = HumanComputerAgentData;
@@ -60,6 +60,12 @@ export interface NodeData extends EntityData {
     neighbours: Array<number>;
     road?: "paved"|"dirt",
     construction?: NodeConstructionDataTypes;
+}
+
+export interface ProjectileData extends EntityData {
+    type: "projectile";
+    toX: number;
+    toY: number;
 }
 
 export interface DigestivePodData extends EntityData {
