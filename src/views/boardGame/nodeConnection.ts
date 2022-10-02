@@ -16,15 +16,37 @@ export class NodeConnection implements Entity {
 
         const center = new Point((this._model1.x + this._model2.x) / 2, (this._model1.y + this._model2.y) / 2);
 
+        let ax = this._model1.x;
+        let ay = this._model1.y;
+
+        let bx = this._model2.x;
+        let by = this._model2.y;
+
+        const dx = ax - bx;
+        const dy = ay - by;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const nx = dx / length;
+        const ny = dy / length;
+
+        const xradius = 128 / 2;
+        const yradius = 128 / 2;
+
+        ax -= nx * xradius;
+        ay -= ny * yradius;
+
+        bx += nx * xradius;
+        by += ny * yradius;
+
         this._sprite = new Graphics();
         this._sprite.position.set(center.x, center.y);
-        this._sprite.lineStyle({ width: 4, color: 0x440000 });
+        this._sprite.lineStyle({ width: 4, color: 0x6666bb });
         this._sprite.drawPolygon([
-            new Point(this._model1.x - center.x, this._model1.y - center.y),
-            new Point(this._model2.x - center.x, this._model2.y - center.y),
+            new Point(ax - center.x, ay - center.y),
+            new Point(bx - center.x, by - center.y),
         ]);
+        this._sprite.alpha = 0.0;
         this._sprite.zIndex = Math.min(this._model1.y, this._model2.y);
-        
+
         if (!this._view.gameLayer) throw new Error();
 
         this._view.gameLayer.addChild(this._sprite);

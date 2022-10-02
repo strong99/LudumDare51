@@ -1,10 +1,10 @@
-import { speed } from "jquery";
+import { nodeName, speed } from "jquery";
 import { PeasantData } from "../io/dto";
 import { CityConstruction } from "./cityConstruction";
 import { DefensiveConstruction } from "./defensiveConstruction";
 import { Human } from "./human";
 import { LureConstruction } from "./lureConstruction";
-import { Node } from "./node";
+import { Node, RoadType } from "./node";
 import { NodePathfinder } from "./nodePathfinder";
 import { TownConstruction } from "./townConstruction";
 import { TreeConstruct } from "./treeConstruct";
@@ -51,7 +51,7 @@ export class Peasant extends Human {
                 task = (n) => nearestNode !== n && (n.construct instanceof LureConstruction || n.construct instanceof TreeConstruct);
             }
             else if (this._task === PeasantTask.Socialize ||
-                     this._task === PeasantTask.Alert) {
+                this._task === PeasantTask.Alert) {
                 task = (n) => nearestNode !== n && (n.construct instanceof CityConstruction || n.construct instanceof TownConstruction);
             }
             else {
@@ -66,7 +66,11 @@ export class Peasant extends Human {
                 };
             }
 
-            const path = this._pathfinder.find(nearestNode, (c, n, s) => 500 * Math.random(), task);
+            const path = this._pathfinder.find(
+                nearestNode,
+                (c, n, s) => 500 * (0.75 + Math.random() / 4) * (1 + (4 - (n.road - c.road)) / 4),
+                task
+            );
 
             if (path) {
                 this._path = path;
@@ -83,12 +87,12 @@ export class Peasant extends Human {
             }
 
             const dx = next.x - this.x;
-            const dy = (next.y - this.y) * 2;
+            const dy = (next.y - this.y) * 1.5;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             // If peasant comes close to a sub-node continue to the next
-            if ((this._path.length > 1 && distance < 128) ||
-                distance < 32) {
+            if ((this._path.length > 1 && distance < 24) ||
+                distance < 16) {
                 this._path.shift();
 
                 if (distance < 32 && (next.construct instanceof CityConstruction || next.construct instanceof TownConstruction)) {

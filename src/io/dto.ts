@@ -58,6 +58,7 @@ export interface TreeConstructionData extends NodeConstructionData {
 export interface NodeData extends EntityData {
     type: "node";
     neighbours: Array<number>;
+    road?: "paved"|"dirt",
     construction?: NodeConstructionDataTypes;
 }
 

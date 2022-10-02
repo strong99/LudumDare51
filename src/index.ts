@@ -6,7 +6,7 @@ const app = new Application({
 	view: canvas,
 	resolution: window.devicePixelRatio || 1,
 	autoDensity: true,
-	backgroundColor: 0x6495ed,
+	backgroundColor: 0xd2f5f8,
 	width: window.innerWidth,
 	height: window.innerHeight
 });

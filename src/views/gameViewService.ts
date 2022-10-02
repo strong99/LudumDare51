@@ -1,4 +1,5 @@
 import { Application, Container, Text } from "pixi.js";
+import { DemoWorld } from "../demo/DemoWorld";
 import { SaveManager } from "../io/saveManager";
 import { World } from "../model/world";
 import { BoardGameView } from "./boardGameView";
@@ -56,7 +57,8 @@ export class GameViewService {
     public constructor(pixiApp: Application) {
         this._pixi = pixiApp;
         this._pixi.stage.addChild(this._viewLayer);
-        this.swapViewToMenu();
+        //this.swapViewToMenu();
+        this.swapViewToBoard(new World(DemoWorld));
     }
 
     /**

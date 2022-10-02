@@ -10,6 +10,12 @@ export interface Interaction {
     do(): void;
 }
 
+export enum RoadType {
+    none,
+    dirt,
+    paved
+}
+
 export class Node implements Entity {
     public get id() { return this._id; }
     private _id: number = 0;
@@ -22,6 +28,9 @@ export class Node implements Entity {
 
     public get x() { return this._x; }
     private _x: number;
+
+    public get road() { return this._road; }
+    private _road: RoadType = RoadType.none;
 
     public get y() { return this._y; }
     private _y: number;
@@ -43,6 +52,8 @@ export class Node implements Entity {
             this._id = data.id;
             this._x = data.x;
             this._y = data.y;
+            this._road = RoadType[data.road as unknown as RoadType] as unknown as RoadType ?? RoadType.none;
+
             if (data.construction) {
                 NodeConstructionFactory.TryCreate(this, data.construction);
             }

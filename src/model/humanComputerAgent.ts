@@ -9,6 +9,10 @@ import { TownConstruction } from "./townConstruction";
 import { Warrior } from "./warrior";
 import { OnAddEntityCallback, OnRemoveEntityCallback, World } from "./world";
 
+function randomItemFromArray<T>(array: Array<T>): T {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
 function remove<T>(array: Array<T>, target: T){
     const idx = array.indexOf(target);
     if (idx != -1) {
@@ -86,8 +90,8 @@ export class HumanComputerAgent implements Agent {
                 }
             }
             else if (this._peasants.length < 15) {
-                const towns = this._player.world.entities.filter(e => e instanceof Node && e.construct instanceof TownConstruction);
-                const town = towns[0] as Node;
+                const towns = this._player.world.entities.filter(e => e instanceof Node && e.construct instanceof TownConstruction) as Array<Node>;
+                const town = randomItemFromArray(towns);
                 this._player.buyPeasant(town.construct as TownConstruction);
             }
         }
