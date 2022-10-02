@@ -135,6 +135,9 @@ export class BoardGameView implements PlayGameView {
         for (let i = 0; i < 6; i++) {
             loader.add(`defensiveConstruct/frame000${i}.png`);
         }
+        for (let i = 0; i < 11; i++) {
+            loader.add(`digestivePod/frame00${("00" + i).slice(-2)}.png`);
+        }
         for (let i = 1; i < 6; i++) {
             loader.add(`faraway00${i}.png`);
         }

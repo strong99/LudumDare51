@@ -171,17 +171,17 @@ export class TreePlayer implements Player {
             }
             t.alert();
         }
-        toBeTrapped.destroy();
 
         if (node.construct instanceof LureConstruction) {
             new DigestivePod(node.world, {
                 type: "digestivePod",
                 age: 0,
                 id: this._world.generateId(),
-                x: Math.random() * 128 + node.x,
-                y: Math.random() * 64 + 25 + node.y,
+                x: toBeTrapped.x,
+                y: toBeTrapped.y,
             });
         }
+        toBeTrapped.destroy();
         return true;
     }
 

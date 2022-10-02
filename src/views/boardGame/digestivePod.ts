@@ -1,4 +1,4 @@
-import { Sprite, Texture } from 'pixi.js';
+import { AnimatedSprite, Sprite, Texture } from 'pixi.js';
 import { DigestivePod as DigestivePodModel } from '../../model/digestivePod';
 import { BoardGameView } from '../boardGameView';
 import { Entity } from '../entity';
@@ -9,7 +9,7 @@ export class DigestivePod implements Entity {
     private _model: DigestivePodModel;
 
     public get gameLayer() { return this._view.gameLayer; }
-    private _sprite: Sprite;
+    private _sprite: AnimatedSprite;
 
     private _onRemoveEntity: OnRemoveEntityCallback = e => {
         if (e === this._model) this.destroy();
@@ -19,7 +19,16 @@ export class DigestivePod implements Entity {
         this._view = view;
         this._model = model;
 
-        this._sprite = new Sprite(Texture.from("pod.png"));
+        const textures = new Array<Texture>();
+        for(let i = 0; i < 11; i++) {
+            textures.push(Texture.from(`digestivePod/frame00${("00" + i).slice(-2)}.png`));
+        }
+
+        this._sprite = new AnimatedSprite(textures);
+        this._sprite.play();
+        this._sprite.onFrameChange = idx => idx === 8 && this._sprite.stop();
+        this._sprite.animationSpeed = 0.05;
+        this._sprite.loop = false;
         this._sprite.position.set(this._model.x, this._model.y);
         this._sprite.anchor.set(0.5, 0.9)
         this._sprite.interactive = true;
@@ -43,6 +52,7 @@ export class DigestivePod implements Entity {
 
         this._destroyed = true;
         this._model.world.offRemoveEntity(this._onRemoveEntity);
-        this._sprite?.parent.removeChild(this._sprite);
+        this._sprite.onComplete = ()=>this._sprite.destroy();
+        this._sprite.gotoAndPlay(8);
     }
 }
