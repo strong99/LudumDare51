@@ -126,7 +126,8 @@ export class TreePlayer implements Player {
         const peasants = this._world.entities.filter(e => e instanceof Peasant) as Peasant[];
         const trapRange = 64;
 
-        if (node.construct instanceof LureConstruction === false) {
+        if (node.construct instanceof LureConstruction === false &&
+            node.construct instanceof TreeConstruct === false) {
             return false;
         }
 
@@ -149,7 +150,8 @@ export class TreePlayer implements Player {
         const withinTrapRange = new Array<Peasant>();
         const withinAlertRange = new Array<Peasant>();
 
-        if (node.construct instanceof LureConstruction === false) {
+        if (node.construct instanceof LureConstruction === false &&
+            node.construct instanceof TreeConstruct === false) {
             return false;
         }
 
@@ -158,7 +160,7 @@ export class TreePlayer implements Player {
 
         for (const p of peasants) {
             const dx = p.x - node.x;
-            const dy = (p.y - node.y) * 2;
+            const dy = (p.y - node.y) * 1.5;
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < alertRange) withinAlertRange.push(p);
             if (distance < trapRange) withinTrapRange.push(p);
@@ -172,15 +174,13 @@ export class TreePlayer implements Player {
             t.alert();
         }
 
-        if (node.construct instanceof LureConstruction) {
-            new DigestivePod(node.world, {
-                type: "digestivePod",
-                age: 0,
-                id: this._world.generateId(),
-                x: toBeTrapped.x,
-                y: toBeTrapped.y,
-            });
-        }
+        new DigestivePod(node.world, {
+            type: "digestivePod",
+            age: 0,
+            id: this._world.generateId(),
+            x: toBeTrapped.x,
+            y: toBeTrapped.y,
+        });
         toBeTrapped.destroy();
         return true;
     }

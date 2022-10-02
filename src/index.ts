@@ -20,5 +20,7 @@ app.stage.addChild(mainLayer);
 const  gameViewService = new GameViewService(app);
 
 app.ticker.add((time)=>{
-	gameViewService.update(app.ticker.elapsedMS);
+	let t = app.ticker.elapsedMS;
+	if (t > 32) t = 16;
+	gameViewService.update(t);
 });

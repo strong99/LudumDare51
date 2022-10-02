@@ -32,6 +32,8 @@ export class BoardGameView implements PlayGameView {
 
     private _dialog?: Entity;
     private _surface?: Sprite;
+
+    public get entities() { return this._entities; }
     private _entities = new Array<Entity>();
     private _minX = -1300
     private _maxX = 1300;

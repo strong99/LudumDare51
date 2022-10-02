@@ -1,8 +1,12 @@
 import { NodeConstructionDataTypes } from "../io/dto";
 import { DigestivePod } from "./digestivePod";
+import { Node } from "./node";
 import { Player } from "./player";
 
 export abstract class NodeConstruction {
+    public get node(): Node { return this._node; }
+    protected _node!: Node;
+
     public get level() { return this._level; }
     protected _level = 1;
 

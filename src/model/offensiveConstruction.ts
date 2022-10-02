@@ -4,8 +4,6 @@ import { NodeConstruction } from "./nodeConstruction";
 import { TreePlayer } from "./treePlayer";
 
 export class OffensiveConstruction extends NodeConstruction {
-    public get node(): Node { return this._node; }
-    private _node: Node;
 
     public get id() { return this._id; }
     private _id: number;

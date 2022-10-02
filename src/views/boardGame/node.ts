@@ -6,7 +6,9 @@ import { BoardGameView } from '../boardGameView';
 import { Entity } from '../entity';
 
 export class Node implements Entity {
+    public get view(): BoardGameView { return this._view; }
     private _view: BoardGameView;
+    
     private _model: NodeModel;
 
     public get gameLayer() { return this._view.gameLayer; }

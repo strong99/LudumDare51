@@ -4,8 +4,6 @@ import { NodeConstruction } from "./nodeConstruction";
 import { UnitSpawn } from "./unitSpawn";
 
 export class TownConstruction extends NodeConstruction implements UnitSpawn {
-    public get node() { return this._node; }
-    private _node: Node;
 
     public get id() { return this._id; }
     private _id: number;
