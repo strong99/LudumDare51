@@ -28,8 +28,8 @@ export class BoardGameView implements PlayGameView {
     private _dialog?: Entity;
     private _surface?: Sprite;
     private _entities = new Array<Entity>();
-    private _minX = -786
-    private _maxX = 786;
+    private _minX = -600
+    private _maxX = 1300;
     private _scrollViewport = 0;
 
     private _onAddEntity: OnAddEntityCallback = e => {
@@ -123,11 +123,16 @@ export class BoardGameView implements PlayGameView {
 
         // Scroll viewport
         const scrollSpeed = 2;
-        if (this._scrollViewport == -1 && -this._gameLayer.x > this._minX) {
-            this._gameLayer.x = Math.max(this._minX, this._gameLayer.x + elapsedTime * scrollSpeed);
+        const hw = window.innerWidth / 2;
+        const maxX = this._maxX - hw;
+        const minX = this._minX + hw;
+        if (this._scrollViewport == -1 && -this._gameLayer.x > minX) {
+            console.log('<', -this._gameLayer.x, minX);
+            this._gameLayer.x = Math.min(-minX, this._gameLayer.x + elapsedTime * scrollSpeed);
         }
-        else if (this._scrollViewport == 1 && -this._gameLayer.x < this._maxX) {
-            this._gameLayer.x = Math.min(this._maxX, this._gameLayer.x - elapsedTime * scrollSpeed);
+        else if (this._scrollViewport == 1 && -this._gameLayer.x < maxX) {
+            console.log('>', -this._gameLayer.x, maxX);
+            this._gameLayer.x = Math.max(-maxX, this._gameLayer.x - elapsedTime * scrollSpeed);
         }
 
         const entities = [...this._entities];

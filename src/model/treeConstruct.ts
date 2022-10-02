@@ -117,7 +117,7 @@ export class TreeConstruct extends NodeConstruction {
     private tryConsume() {
         const podToConsume = this._pods.shift();
         if (podToConsume) {
-            //++this._buildpoints;
+            this._timeSincePodConsumed += maxTimeSincePodConsumed;
             podToConsume.destroy();
         }
         else {

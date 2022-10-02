@@ -37,6 +37,34 @@ export const DemoWorld: WorldData = {
             }
         },
         {
+            id: 17,
+            type: "digestivePod",
+            age: 900,
+            x: 0,
+            y: 50
+        },
+        {
+            id: 18,
+            type: "digestivePod",
+            age: 7500,
+            x: 50,
+            y: 35
+        },
+        {
+            id: 19,
+            type: "digestivePod",
+            age: 800,
+            x: 50,
+            y: 35
+        },
+        {
+            id: 20,
+            type: "digestivePod",
+            age: 1200,
+            x: 70,
+            y: 45
+        },
+        {
             type: "node",
             neighbours: [1, 7],
             id: 3,

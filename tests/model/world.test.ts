@@ -8,6 +8,7 @@ it('constructWorldSuccess', () => {
         playTime: playTime,
         lastGeneratdId: 2,
         players: [],
+        agents: [],
         entities: [
             { id: 2, type: "node", x: 0, y: 0, neighbours: [] }
         ]
@@ -22,6 +23,7 @@ it('addEntityToWorldSuccess', () => {
         playTime: 231,
         lastGeneratdId: 2,
         players: [],
+        agents: [],
         entities: []
     });
 
@@ -43,6 +45,7 @@ it('removeEntityToWorldSuccess', () => {
         playTime: 231,
         lastGeneratdId: 2,
         players: [],
+        agents: [],
         entities: [
             { id: 2, type: "node", x: 0, y: 0, neighbours: [] }
         ]
@@ -62,6 +65,7 @@ it('serializeWorld', () => {
         playTime: playTime,
         lastGeneratdId: 2,
         players: [],
+        agents: [],
         entities: [
             { id: 2, type: "node", x: 0, y: 0, neighbours: [] }
         ]

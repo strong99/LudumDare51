@@ -26,6 +26,7 @@ it('doLoadExistingQuickSave', ()=>{
     localStorage[saveKey] = JSON.stringify({
         playTime: 453,
         lastGeneratdId: 2,
+        agents: [],
         players: [],
         entities: []
     } as WorldData);

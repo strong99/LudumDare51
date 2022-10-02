@@ -15,7 +15,8 @@ export class TreePlayer implements Player {
     public get id(): number { return this._id; }
     private _id: number;
 
-    public get isDead(): boolean { return false; }
+    public get isDead(): boolean { return this._isDead; }
+    private _isDead = false;
 
     private _buildpoints = 3;
 
@@ -31,6 +32,9 @@ export class TreePlayer implements Player {
     }
 
     public canUpgradeNode(node: Node, type: "lure" | "defensive" | "offensive"): boolean {
+        if (this._isDead)
+            return false;
+
         const notExists = (
             !node.construct ||
             node.construct.canUpgrade(type)
@@ -50,6 +54,9 @@ export class TreePlayer implements Player {
     }
 
     public tryUpgradeNode(node: Node, type: "lure" | "defensive" | "offensive"): boolean {
+        if (this._isDead)
+            return false;
+
         if (!this.canUpgradeNode(node, type)) {
             return false;
         }
@@ -88,7 +95,10 @@ export class TreePlayer implements Player {
         throw new Error("Not yet implemented");
     }
 
-    public canActiveTrap(node: Node) {
+    public canActiveTrap(node: Node): boolean {
+        if (this._isDead)
+            return false;
+
         const peasants = this._world.entities.filter(e => e instanceof Peasant) as Peasant[];
         const trapRange = 64;
 
@@ -107,6 +117,9 @@ export class TreePlayer implements Player {
     }
 
     public tryActiveTrap(node: Node) {
+        if (this._isDead)
+            return false;
+
         const peasants = this._world.entities.filter(e => e instanceof Peasant) as Peasant[];
         // near
         const withinTrapRange = new Array<Peasant>();
@@ -153,6 +166,9 @@ export class TreePlayer implements Player {
     }
 
     public interactions(entity: Entity): Array<Interaction> {
+        if (this._isDead)
+            return [];
+
         const items = new Array<Interaction>();
         if (entity instanceof Node) {
             if (entity.construct instanceof LureConstruction) {
@@ -221,7 +237,15 @@ export class TreePlayer implements Player {
     }
 
     public update(elapsedTime: number): void {
+        if (this._isDead)
+            return;
 
+        const treesAlive = this._world.entities.some(n => n instanceof Node && n.construct instanceof TreeConstruct && n.construct.player === this && !n.construct.hasDied);
+        if (!treesAlive) {
+            console.error('game over');
+            this._isDead = true;
+            //game over
+        }
     }
 
     public destroy(): void {
