@@ -89,6 +89,16 @@ export class BoardGameView implements PlayGameView {
     }
     //private _treeJson = new Array<{type:string, x: number, y: number}>();
 
+    private _keydown: (this: Window, ev: KeyboardEvent) => any = e => {
+        if (e.code === 'ArrowLeft') this._scrollViewport = -1;
+        else if (e.code === 'ArrowRight') this._scrollViewport = 1;
+    };
+
+    private _keyup: (this: Window, ev: KeyboardEvent) => any = e => {
+        if (e.code === 'ArrowLeft') this._scrollViewport = 0;
+        else if (e.code === 'ArrowRight') this._scrollViewport = 0;
+    };
+
     private _onPointerMove: (this: Window, ev: PointerEvent) => any = e => {
         if (e.x < 100) this._scrollViewport = -1;
         else if (e.x > window.innerWidth - 100) this._scrollViewport = 1;
@@ -150,6 +160,8 @@ export class BoardGameView implements PlayGameView {
 
         // Scroll viewport
         window.addEventListener('pointermove', this._onPointerMove);
+        window.addEventListener('keydown', this._keydown);
+        window.addEventListener('keyup', this._keyup);
 
         const loadState = new LoadState();
         let i = 0;
@@ -228,6 +240,8 @@ export class BoardGameView implements PlayGameView {
 
     public destroy(): void {
         window.removeEventListener('pointermove', this._onPointerMove);
+        window.removeEventListener('keydown', this._keydown);
+        window.removeEventListener('keyup', this._keyup);
         this._gameLayer?.parent?.removeChild(this._gameLayer);
         this._viewLayer?.parent?.removeChild(this._viewLayer);
         this._uiLayer?.parent?.removeChild(this._uiLayer);
