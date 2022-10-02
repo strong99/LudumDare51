@@ -1,5 +1,5 @@
-import { Sprite, Texture } from 'pixi.js';
-import { Peasant as PeasantModel } from '../../model/peasant';
+import { AnimatedSprite, Sprite, Texture } from 'pixi.js';
+import { Peasant as PeasantModel, PeasantTask } from '../../model/peasant';
 import { OnRemoveEntityCallback } from '../../model/world';
 import { BoardGameView } from '../boardGameView';
 import { Entity } from '../entity';
@@ -10,6 +10,7 @@ export class Peasant implements Entity {
 
     public get gameLayer() { return this._sprite; }
     private _sprite: Sprite;
+    private _icon?: AnimatedSprite;
 
     private _onRemoveEntity: OnRemoveEntityCallback = e => {
         if (e === this._model) this.destroy();
@@ -30,9 +31,32 @@ export class Peasant implements Entity {
         this._view.gameLayer.addChild(this._sprite);
     }
 
+    private _state?: PeasantTask;
     public update(timeElapsed: number): void {
         this._sprite.position.set(this._model.x, this._model.y);
         this._sprite.zIndex = this._sprite.position.y + (1 - this._sprite.anchor.y) * this._sprite.texture.height + 1000;
+
+        if (this._model.isAlerted && this._state !== PeasantTask.Alert) {
+            this._state = PeasantTask.Alert;
+            const textures = new Array<Texture>();
+            for(let i = 0; i < 4; i++) {
+                textures.push(Texture.from(`iconAlert/frame000${i}.png`));
+            }
+            this._icon?.destroy();
+            this._icon = new AnimatedSprite(textures);
+            this._icon.play();
+            this._icon.loop = true;
+            this._icon.animationSpeed = 0.2;
+            this._icon.anchor.set(0.5);
+            this._icon.y -= 34;
+            this._sprite.addChild(this._icon);
+            delete this._icon;
+        }
+        else if (!this._model.isAlerted && this._state === PeasantTask.Alert) {
+            delete this._state;
+            this._icon?.destroy();
+            delete this._icon;
+        }
     }
 
     private _destroyed = false

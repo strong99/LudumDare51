@@ -33,28 +33,28 @@ export const DemoWorld: WorldData = {
             type: "digestivePod",
             age: 900,
             x: 0,
-            y: 50
+            y: -140
         },
         {
             id: 18,
             type: "digestivePod",
             age: 7500,
-            x: 50,
-            y: 35
+            x: 80,
+            y: -145
         },
         {
             id: 19,
             type: "digestivePod",
             age: 800,
-            x: 50,
-            y: 35
+            x: 30,
+            y: -145
         },
         {
             id: 20,
             type: "digestivePod",
             age: 1200,
-            x: 70,
-            y: 45
+            x: 90,
+            y: -125
         },
         {
             type: "node",

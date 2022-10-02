@@ -10,7 +10,7 @@ import { TownConstruction } from "./townConstruction";
 import { TreeConstruct } from "./treeConstruct";
 import { World } from "./world";
 
-enum PeasantTask {
+export enum PeasantTask {
     Wander,
     Socialize,
     Forage,
@@ -123,6 +123,7 @@ export class Peasant extends Human {
         }
     }
 
+    public get isAlerted() {  return this._task === PeasantTask.Alert; }
     public alert() {
         this._task = PeasantTask.Alert;
         if (this._path) this._path.length = 0;
