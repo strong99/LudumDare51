@@ -13,9 +13,12 @@ import { TreePlayer } from "../model/treePlayer";
 import { GameOverDialog } from "./boardGame/gameOverDialog";
 import { worldTreeLocations } from "../demo/treeLocations";
 import { Sound } from "@pixi/sound";
+import { GameMenuSidePanel } from "./boardGame/gameMenuSidePanel";
 
 export class BoardGameView implements PlayGameView {
+    public get service() { return this._service; }
     private _service: GameViewService;
+
     private _pixi: Application;
     private _world: World;
 
@@ -218,6 +221,12 @@ export class BoardGameView implements PlayGameView {
             .add('lure.png')
             .add('defensive.png')
             .add('offensive.png')
+            .add('iconMenu.png')
+            .add('iconRestart.png')
+            .add('iconFullscreen.png')
+            .add('iconSave.png')
+            .add('iconLoad.png')
+            .add('iconLDJam.png')
             .add('surface.png');
 
         for (let i = 0; i < 3; i++) {
@@ -269,6 +278,8 @@ export class BoardGameView implements PlayGameView {
                 t.zIndex = treeLocation.y + 1000;
                 this._gameLayer!.addChild(t);
             }
+
+            this._entities.push(new GameMenuSidePanel(this, this._world));
 
             this._surface = new Sprite(r.resources['surface.png'].texture);
             this._surface.anchor.set(0.5, 1);
@@ -360,6 +371,9 @@ export class BoardGameView implements PlayGameView {
         delete this._prevMusic;
         for(const a of this._activeSounds) {
             a.sound.stop();
+        }
+        for(const e of this._entities) {
+            e.destroy();
         }
 
         window.removeEventListener('pointermove', this._onPointerMove);

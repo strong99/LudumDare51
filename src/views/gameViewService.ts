@@ -14,6 +14,7 @@ import { MenuGameView } from "./menuGameView";
 class LoadingGameView {
     private _pixi: Application;
     private _service: GameViewService;
+
     private _listener: LoadStateListener;
 
     private _container = new Container();
@@ -57,8 +58,8 @@ export class GameViewService {
     public constructor(pixiApp: Application) {
         this._pixi = pixiApp;
         this._pixi.stage.addChild(this._viewLayer);
-        this.swapViewToMenu();
-        //this.swapViewToBoard(new World(DemoWorld));
+        //this.swapViewToMenu();
+        this.swapViewToBoard(new World(DemoWorld));
     }
 
     /**
@@ -87,11 +88,23 @@ export class GameViewService {
         this._view?.update(elapsedTime);
     }
 
+    public toggleFullscreen(newState?: boolean): boolean {
+        newState ??= !!!document.fullscreenElement;
+        if (newState) {
+            this._pixi.view.requestFullscreen();
+        }
+        else {
+            document.exitFullscreen();
+        }
+        return !!document.fullscreenElement;
+    }
+
     public swapViewToMenu(world?: World): void {
         this.swapView(new MenuGameView(this, this._pixi, world));
     }
 
-    public swapViewToBoard(world: World): void {
+    public swapViewToBoard(world?: World): void {
+        world ??= new World(DemoWorld);
         this.swapView(new BoardGameView(this, this._pixi, world));
     }
 }
