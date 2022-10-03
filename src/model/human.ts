@@ -1,5 +1,7 @@
+import { ArgumentNullException } from "../exceptions/argumentNullException";
 import { HumanData, HumanDataTypes } from "../io/dto";
 import { Entity } from "./entity";
+import { Player } from "./player";
 import { World } from "./world";
 
 export abstract class Human implements Entity {
@@ -15,12 +17,19 @@ export abstract class Human implements Entity {
     public get world(): World { return this._world; }
     protected _world: World;
 
+    public get player(): Player { return this._player; }
+    protected _player: Player;
+
     public constructor(world: World, data: HumanData) {
         this._world = world;
 
         this._id = data.id;
         this._x = data.x;
         this._y = data.y;
+
+        const player = this._world.players.find(p=>p.id === data.player);
+        if (!player) throw new ArgumentNullException(`Player ${data.player} not found for construct`);
+        this._player = player;
         
         this._world.addEntity(this);
     }

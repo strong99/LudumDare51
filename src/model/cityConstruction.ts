@@ -1,3 +1,4 @@
+import { ArgumentNullException } from "../exceptions/argumentNullException";
 import { CityConstructionData } from "../io/dto";
 import { Node } from "./node";
 import { NodeConstruction } from "./nodeConstruction";
@@ -21,7 +22,7 @@ export class CityConstruction extends NodeConstruction implements UnitSpawn {
         this._alertDecreaseSpeed = data.alertDecreaseSpeed ?? 25000;
 
         const player = this._node.world.players.find(p=>p.id === data.player);
-        if (!player) throw new Error(`Player ${data.player} not found for construct`);
+        if (!player) throw new ArgumentNullException(`Player ${data.player} not found for construct`);
         this._player = player;
     }
 

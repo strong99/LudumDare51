@@ -125,7 +125,8 @@ export class Warrior extends Human {
             type: "warrior",
             id: this.id,
             x: this._x,
-            y: this._y
+            y: this._y,
+            player: this.player.id
         };
     }
 }

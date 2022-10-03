@@ -1,3 +1,4 @@
+import { ArgumentNullException } from "../exceptions/argumentNullException";
 import { TreeConstructionData } from "../io/dto";
 import { DigestivePod } from "./digestivePod";
 import { Node } from "./node";
@@ -59,7 +60,7 @@ export class TreeConstruct extends NodeConstruction {
         this._node.world.onRemoveEntity(this._onRemoveEntity);
 
         const player = this._node.world.players.find(p=>p.id === data.player);
-        if (!player) throw new Error(`Player ${data.player} not found for construct`);
+        if (!player) throw new ArgumentNullException(`Player ${data.player} not found for construct`);
         this._player = player;
     }
 

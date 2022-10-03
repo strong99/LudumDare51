@@ -135,7 +135,8 @@ export class Peasant extends Human {
             type: "peasant",
             id: this.id,
             x: this._x,
-            y: this._y
+            y: this._y,
+            player: this.player.id
         };
     }
 }

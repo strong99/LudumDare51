@@ -20,7 +20,7 @@ export interface EntityData {
 }
 
 export interface HumanData extends EntityData {
-
+    player: number;
 }
 
 export interface PeasantData extends HumanData {

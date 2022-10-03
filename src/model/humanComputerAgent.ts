@@ -1,3 +1,4 @@
+import { ArgumentNullException } from "../exceptions/argumentNullException";
 import { HumanComputerAgentData } from "../io/dto";
 import { Agent } from "./agent";
 import { CityConstruction } from "./cityConstruction";
@@ -59,7 +60,10 @@ export class HumanComputerAgent implements Agent {
     }
 
     public constructor(world: World, data: HumanComputerAgentData) {
-        this._player = world.players.find(p => p.id === data.player && p instanceof KingdomPlayer)! as KingdomPlayer;
+        const player = world.players.find(p => p.id === data.player && p instanceof KingdomPlayer) as KingdomPlayer|undefined;
+        if (!player) throw new ArgumentNullException(`Player ${data.player} not found for agent`);
+        this._player = player;
+
         world.addAgent(this);
 
         this._player.world.onAddEntity(this._onAddEntity);

@@ -1,3 +1,4 @@
+import { ArgumentNullException } from "../exceptions/argumentNullException";
 import { OffensiveConstructionData } from "../io/dto";
 import { Hero } from "./hero";
 import { Node } from "./node";
@@ -20,7 +21,7 @@ export class OffensiveConstruction extends NodeConstruction {
         this._id = data.id;
 
         const player = this._node.world.players.find(p=>p.id === data.player);
-        if (!player) throw new Error(`Player ${data.player} not found for construct`);
+        if (!player) throw new ArgumentNullException(`Player ${data.player} not found for construct`);
         this._player = player;
     }
 

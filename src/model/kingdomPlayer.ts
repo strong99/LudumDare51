@@ -16,14 +16,11 @@ export class KingdomPlayer implements Player {
     public get world(): World { return this._world; }
     private _world: World;
 
-    public constructor(world: World, data?: KingdomPlayerData) {
+    public constructor(world: World, data: KingdomPlayerData) {
         this._world = world;
-        if (data) {
-            this._id = data.id;
-        }
-        else {
-            this._id = world.generateId();
-        }
+
+        this._id = data.id;
+        
         this._world.addPlayer(this);
     }
     
@@ -44,6 +41,7 @@ export class KingdomPlayer implements Player {
             type: "peasant",
             x: construction.node.x,
             y: construction.node.y,
+            player: this.id
         });
     }
 
@@ -54,6 +52,7 @@ export class KingdomPlayer implements Player {
             type: "warrior",
             x: construction.node.x,
             y: construction.node.y,
+            player: this.id
         });
     }
 
@@ -64,6 +63,7 @@ export class KingdomPlayer implements Player {
             type: "hero",
             x: construction.node.x,
             y: construction.node.y,
+            player: this.id
         });
     }
 
