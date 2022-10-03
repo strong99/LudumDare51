@@ -1,4 +1,4 @@
-import { AnimatedSprite, Application, Container, Loader, Sprite, SpritesheetLoader, Text, TextStyle, Texture } from "pixi.js";
+import { AnimatedSprite, Application, Container, Loader, Sprite, SpritesheetLoader, Text, TextStyle, Texture, utils } from "pixi.js";
 import { DemoWorld } from "../demo/DemoWorld";
 import { World } from "../model/world";
 import { GameView } from "./gameView";
@@ -74,20 +74,20 @@ export class MenuGameView implements GameView {
         this._pixi.stage.addChild(this._parentResource);
         this._parentResource.visible = true;
 
-        const loader = new Loader()
-            .add('continueButton.png')
-            .add('questBoard.png')
-            .add('startButton.png')
-            .add('menu.png');
+        const toLoad = new Array(...[
+            'continueButton.png',
+            'questBoard.png',
+            'startButton.png',
+            'menu.png'
+        ]);
 
         for (let i = 0; i < 10; ++i) {
-            loader.add(`rootsGrabbing/frame000${i}.png`);
+            toLoad.push(`rootsGrabbing/frame000${i}.png`);
         }
 
         const loadState = new LoadState();
         let i = 0;
-        loader.onProgress.add((l, r) => loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
-        loader.onComplete.add((r) => {
+        const onLoad: Loader.OnCompleteSignal = (r) => {
             if (!this._parentResource) {
                 throw new Error("Layer not loaded");
             }
@@ -161,8 +161,19 @@ export class MenuGameView implements GameView {
             this._parentResource.addChild(this._topright);
 
             loadState.onFinished()
-        });
-        loader.load();
+        };
+
+        const notLoadedYet = toLoad.filter(p => p in utils.TextureCache === false);
+        if (notLoadedYet.length > 0) {
+            const loader = new Loader();
+            loader.add(notLoadedYet);
+            loader.onProgress.add((l, r) => loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
+            loader.onComplete.add(onLoad);
+            loader.load();
+        }
+        else {
+            onLoad(this._pixi.loader, this._pixi.loader.resources);
+        }
         return loadState;
     }
 

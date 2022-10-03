@@ -1,4 +1,4 @@
-import { Application, Container, Loader, Sprite, Text, Texture } from "pixi.js";
+import { Application, Container, Loader, Sprite, Text, Texture, utils } from "pixi.js";
 import { OnAddEntityCallback, World } from "../model/world";
 import { GameViewService } from "./gameViewService";
 import { LoadState, LoadStateListener } from "./loadState";
@@ -96,7 +96,7 @@ export class BoardGameView implements PlayGameView {
 
     private _activeSounds: Array<{ id: string, sound: Sound, count: number }> = [];
     public startPlaying(audio: string) {
-        let activeSound = this._activeSounds.find(p=>p.id === audio);
+        let activeSound = this._activeSounds.find(p => p.id === audio);
         if (!activeSound) {
             const sound = Sound.from(`${audio}.ogg`);
             sound.play();
@@ -114,7 +114,7 @@ export class BoardGameView implements PlayGameView {
     }
 
     public stopPlaying(audio: string) {
-        let activeSound = this._activeSounds.find(p=>p.id === audio);
+        let activeSound = this._activeSounds.find(p => p.id === audio);
         if (activeSound) {
             activeSound.count--;
             if (activeSound.count === 0) {
@@ -214,38 +214,39 @@ export class BoardGameView implements PlayGameView {
         this._service.viewLayer.addChild(this._viewLayer);
         this._service.viewLayer.addChild(this._uiLayer);
 
-        const loader = new Loader()
-            .add('tree.png')
-            .add('treeCluster.png')
-            .add('node.png')
-            .add('lure.png')
-            .add('defensive.png')
-            .add('offensive.png')
-            .add('iconMenu.png')
-            .add('iconRestart.png')
-            .add('iconFullscreen.png')
-            .add('iconSave.png')
-            .add('iconLoad.png')
-            .add('iconLDJam.png')
-            .add('surface.png');
+        const toLoad = new Array<string>(...[
+            'tree.png',
+            'treeCluster.png',
+            'node.png',
+            'lure.png',
+            'defensive.png',
+            'offensive.png',
+            'iconMenu.png',
+            'iconRestart.png',
+            'iconFullscreen.png',
+            'iconSave.png',
+            'iconLoad.png',
+            'iconLDJam.png',
+            'surface.png'
+        ]);
 
         for (let i = 0; i < 3; i++) {
-            loader.add(`nodeHighlighting/frame000${i}.png`);
+            toLoad.push(`nodeHighlighting/frame000${i}.png`);
         }
         for (let i = 0; i < 9; i++) {
-            loader.add(`treeConstruct/frame000${i}.png`);
+            toLoad.push(`treeConstruct/frame000${i}.png`);
         }
         for (let i = 0; i < 5; i++) {
-            loader.add(`lureConstruct/frame000${i}.png`);
+            toLoad.push(`lureConstruct/frame000${i}.png`);
         }
         for (let i = 0; i < 6; i++) {
-            loader.add(`defensiveConstruct/frame000${i}.png`);
+            toLoad.push(`defensiveConstruct/frame000${i}.png`);
         }
         for (let i = 0; i < 11; i++) {
-            loader.add(`digestivePod/frame00${("00" + i).slice(-2)}.png`);
+            toLoad.push(`digestivePod/frame00${("00" + i).slice(-2)}.png`);
         }
         for (let i = 1; i < 6; i++) {
-            loader.add(`faraway00${i}.png`);
+            toLoad.push(`faraway00${i}.png`);
         }
 
         // Scroll viewport
@@ -255,8 +256,8 @@ export class BoardGameView implements PlayGameView {
 
         const loadState = new LoadState();
         let i = 0;
-        loader.onProgress.add((l, r) => loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
-        loader.onComplete.add((r) => {
+
+        const onLoad: Loader.OnCompleteSignal = (r) => {
             if (!this._gameLayer) {
                 throw new Error("Game layer not created");
             }
@@ -264,14 +265,14 @@ export class BoardGameView implements PlayGameView {
             this.playMusic('happytune');
 
             for (let i = 1; i < 6; i++) {
-                const background = new Sprite(loader.resources[`faraway00${6 - i}.png`].texture);
+                const background = new Sprite(Texture.from(`faraway00${6 - i}.png`));
                 background.y = -100;
                 background.anchor.set(0.5, 1);
                 background.zIndex = i * -1000 + background.position.y;
                 this._viewLayer!.addChild(background);
                 this._parallax.push(background);
             }
-            for(const treeLocation of worldTreeLocations) {
+            for (const treeLocation of worldTreeLocations) {
                 const t = new Sprite(Texture.from('treeCluster.png'));
                 t.position.set(treeLocation.x, treeLocation.y);
                 t.anchor.set(0.5, 0.8);
@@ -281,7 +282,7 @@ export class BoardGameView implements PlayGameView {
 
             this._entities.push(new GameMenuSidePanel(this, this._world));
 
-            this._surface = new Sprite(r.resources['surface.png'].texture);
+            this._surface = new Sprite(Texture.from('surface.png'));
             this._surface.anchor.set(0.5, 1);
             this._surface.position.set(0, 256);
             this._surface.zIndex = this._surface.position.y - this._surface.anchor.y * this._surface.texture.height;
@@ -300,7 +301,7 @@ export class BoardGameView implements PlayGameView {
                 fill: 'white',
                 fontWeight: 'bolder'
             });
-            hdr.anchor.set(1,1);
+            hdr.anchor.set(1, 1);
             hdr.y = -20 * 3;
             this._topright.addChild(hdr);
             const expl = new Text("Lure and trap humans to survive and thrive\nBeware not to disrupt men for the Hero will smite\nGrow your roots through magical ground nodes", {
@@ -308,13 +309,24 @@ export class BoardGameView implements PlayGameView {
                 align: 'right',
                 fill: 'white'
             });
-            expl.anchor.set(1,1);
+            expl.anchor.set(1, 1);
             this._topright.addChild(expl);
             this._uiLayer?.addChild(this._topright);
 
             loadState.onFinished()
-        });
-        loader.load();
+        };
+
+        const notLoadedYet = toLoad.filter(p => p in utils.TextureCache === false);
+        if (notLoadedYet.length > 0) {
+            const loader = new Loader();
+            loader.add(notLoadedYet);
+            loader.onProgress.add((l, r) => loadState.onProgress(++i, Object.keys(loader.resources).length, r.name))
+            loader.onComplete.add(onLoad);
+            loader.load();
+        }
+        else {
+            onLoad(this._pixi.loader, this._pixi.loader.resources);
+        }
         return loadState;
     }
 
@@ -369,10 +381,10 @@ export class BoardGameView implements PlayGameView {
         this._music?.stop();
         delete this._music;
         delete this._prevMusic;
-        for(const a of this._activeSounds) {
+        for (const a of this._activeSounds) {
             a.sound.stop();
         }
-        for(const e of this._entities) {
+        for (const e of this._entities) {
             e.destroy();
         }
 
