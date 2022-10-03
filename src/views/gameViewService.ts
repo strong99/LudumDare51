@@ -1,4 +1,4 @@
-import { Application, Container, Text } from "pixi.js";
+import { Application, Container, Loader, Text, utils } from "pixi.js";
 import { DemoWorld } from "../demo/DemoWorld";
 import { SaveManager } from "../io/saveManager";
 import { World } from "../model/world";
@@ -27,7 +27,23 @@ class LoadingGameView {
         this._service = service;
         this._listener = listener;
 
-        this._backdrop = new MenuBackgroundEntity(this._container);
+        const onLoad: Loader.OnCompleteSignal = ()=>{
+            this._backdrop = new MenuBackgroundEntity(this._container);
+        };
+        const toLoadForLoader = new Array<string>();
+        for(let i =1; i < 6; ++i ){
+            toLoadForLoader.push(`menuBack00${i}.png`);
+        }
+        const notYetLoaded = toLoadForLoader.filter(p=>p in utils.TextureCache === false);
+        if (notYetLoaded.length > 0) {
+            const loader = new Loader();
+            loader.onComplete.add(onLoad);
+            loader.load();
+        }
+        else {
+            const r = this._pixi.loader;
+            onLoad(r, r.resources);
+        }
 
         // implementation
         const loadingText = new Text("Loading", {
