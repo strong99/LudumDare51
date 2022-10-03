@@ -63,8 +63,10 @@ export class MenuGameView implements GameView {
         const startMusic = ()=>{
             this.playMusic('happytune');
             window.removeEventListener('click', startMusic);
+            window.removeEventListener('tap', startMusic);
         };
         window.addEventListener('click', startMusic);
+        window.addEventListener('tap', startMusic);
 
         this._parentResource = new Container();
         this._parentResource.visible = false;
@@ -120,6 +122,7 @@ export class MenuGameView implements GameView {
             this._startButton.position.set(153, -120);
             this._startButton.interactive = true;
             this._startButton.on('click', () => this.grabButton(this._startButton!, ()=>this.onNew()));
+            this._startButton.on('tap', () => this.grabButton(this._startButton!, ()=>this.onNew()));
             this._startButton.on('pointerover', () => this._startButton?.anchor.set(0.5, 0.35));
             this._startButton.on('pointerout', () => this._startButton?.anchor.set(0.5, 0.5));
             this._questBoard.addChild(this._startButton);
@@ -130,6 +133,7 @@ export class MenuGameView implements GameView {
                 this._continueButton.position.set(276, -116);
                 this._continueButton.interactive = true;
                 this._continueButton.on('click', () => this.grabButton(this._continueButton!, ()=>this.onContinue()));
+                this._continueButton.on('tap', () => this.grabButton(this._continueButton!, ()=>this.onContinue()));
                 this._continueButton.on('pointerover', () => this._continueButton?.anchor.set(0.5,0.35));
                 this._continueButton.on('pointerout', () => this._continueButton?.anchor.set(0.5,0.5));
                 this._questBoard.addChild(this._continueButton);

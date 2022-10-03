@@ -38,6 +38,7 @@ export class Node implements Entity {
         this._sprite.on('pointerover', ()=>this.startHover());
         this._sprite.on('pointerout', ()=>this.endHover());
         this._sprite.on('click', ()=>this._view.select(model));
+        this._sprite.on('tap', ()=>this._view.select(model));
         this._sprite.zIndex = this._sprite.position.y;
 
         /*const idtxt = new Text(this._model.id);

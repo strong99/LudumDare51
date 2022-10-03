@@ -95,6 +95,7 @@ export class GameMenuSidePanel implements Entity {
         btn.on('pointerover', () => { btn.scale.set(1.1, 1.1); lbl.visible = true; });
         btn.on('pointerout', () => { btn.scale.set(1, 1); lbl.visible = false; });
         btn.on('click', click);
+        btn.on('tap', click);
 
         anchor.addChild(btn);
         return btn;

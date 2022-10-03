@@ -58,8 +58,8 @@ export class GameViewService {
     public constructor(pixiApp: Application) {
         this._pixi = pixiApp;
         this._pixi.stage.addChild(this._viewLayer);
-        //this.swapViewToMenu();
-        this.swapViewToBoard(new World(DemoWorld));
+        this.swapViewToMenu();
+        //this.swapViewToBoard(new World(DemoWorld));
     }
 
     /**

@@ -45,6 +45,12 @@ export class NodeInteractionDialog implements Entity {
                     this._view.select();
                 }
             });
+            sprite.on('tap', ()=> { 
+                if (interaction.can()) {
+                    interaction.do();
+                    this._view.select();
+                }
+            });
             sprite.on('pointerover', ()=> { 
                 sprite.tint = 0xccccff;
                 sprite.scale.set(1.25);
