@@ -1,5 +1,6 @@
 import { Graphics, Point, Sprite, Texture } from 'pixi.js';
 import { Node as NodeModel } from '../../model/node';
+import { TreePlayer } from '../../model/treePlayer';
 import { BoardGameView } from '../boardGameView';
 import { Entity } from '../entity';
 
@@ -60,7 +61,9 @@ export class NodeConnection implements Entity {
     }
 
     public update(timeElapsed: number): void {
-
+        this._sprite.alpha = (
+            (this._model1.construct?.player instanceof TreePlayer|| this._model2.construct?.player instanceof TreePlayer) 
+        ) ? 0.125 : 0;
     }
 
     public destroy(): void {

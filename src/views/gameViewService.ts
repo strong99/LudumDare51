@@ -5,6 +5,7 @@ import { World } from "../model/world";
 import { BoardGameView } from "./boardGameView";
 import { GameView } from "./gameView";
 import { LoadStateListener } from "./loadState";
+import { MenuBackgroundEntity } from "./menuBackgroundEntity";
 import { MenuGameView } from "./menuGameView";
 
 /**
@@ -15,6 +16,8 @@ class LoadingGameView {
     private _pixi: Application;
     private _service: GameViewService;
 
+    private _backdrop?: MenuBackgroundEntity;
+
     private _listener: LoadStateListener;
 
     private _container = new Container();
@@ -24,12 +27,19 @@ class LoadingGameView {
         this._service = service;
         this._listener = listener;
 
+        this._backdrop = new MenuBackgroundEntity(this._container);
+
         // implementation
-        const loadingText = new Text("Loading");
+        const loadingText = new Text("Loading", {
+            align: 'center'
+        });
+        loadingText.anchor.set(0.5);
         this._container.addChild(loadingText);
+        this._container.position.set(window.innerWidth /  2, window.innerHeight / 2);
 
         this._listener.registerOnProgress((idx, total, stage) => {
-            loadingText.text = `${idx}/${total} - ${stage}`;
+            //loadingText.text = `${Math.round(idx/total*100)}%\n${stage}`;
+            loadingText.text = `${Math.round(idx/total*100)}%\nLoading`;
         });
 
         this._pixi.stage.addChild(this._container);
@@ -37,9 +47,12 @@ class LoadingGameView {
 
     public update(timeElapsed: number) {
         // To do: implement load graphics
+        this._backdrop?.update(timeElapsed);
+        this._container.position.set(window.innerWidth /  2, window.innerHeight / 2);
     }
 
     public destroy(): void {
+        this._backdrop?.destroy();
         this._container.destroy();
     }
 }
@@ -85,6 +98,7 @@ export class GameViewService {
     }
 
     public update(elapsedTime: number): void {
+        this._loadingView?.update(elapsedTime);
         this._view?.update(elapsedTime);
     }
 

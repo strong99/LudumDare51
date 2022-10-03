@@ -139,7 +139,10 @@ export class BoardGameView implements PlayGameView {
             this._music.loop = false;
             this._prevMusic = this._music;
         }
-        this._music = Sound.from(`${audio}.ogg`);
+        this._music = Sound.from({
+            url: `${audio}.ogg`,
+            preload: true
+        });
         this._music.loop = true;
     }
 
@@ -155,7 +158,10 @@ export class BoardGameView implements PlayGameView {
             this._music.loop = false;
             this._prevMusic = this._music;
         }
-        this._music = Sound.from(`${audio}.ogg`);
+        this._music = Sound.from({
+            url: `${audio}.ogg`,
+            preload: true
+        });
         this._music.pause();
     }
 
@@ -170,7 +176,10 @@ export class BoardGameView implements PlayGameView {
     }
 
     public playOnce(audio: string) {
-        Sound.from(`${audio}.ogg`).play();
+        Sound.from({
+                url: `${audio}.ogg`,
+                preload: true
+            }).play();
     }
 
     private _keydown: (this: Window, ev: KeyboardEvent) => any = e => {
@@ -221,6 +230,11 @@ export class BoardGameView implements PlayGameView {
             'lure.png',
             'defensive.png',
             'offensive.png',
+            'iconActivateTrap.png',
+            'iconConstructLure.png',
+            'iconConstructDefensive.png',
+            'iconConstructOffensive.png',
+            'iconUpgrade.png',
             'iconMenu.png',
             'iconRestart.png',
             'iconFullscreen.png',
@@ -335,7 +349,7 @@ export class BoardGameView implements PlayGameView {
         if (!this._viewLayer) return;
 
         if (this._prevMusic?.isPlaying !== true) delete this._prevMusic;
-        if (!this._prevMusic && this._music?.isPlaying === false) this._music.play();
+        if (!this._prevMusic && this._music?.isPlaying === false && this._music.isPlayable !== false) this._music.play();
         else if (!this._prevMusic && this._music?.isPlayable !== true) this.queMusic('happytune');
 
         this._world?.update(elapsedTime);

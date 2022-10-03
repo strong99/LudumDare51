@@ -5,6 +5,7 @@ import { GameView } from "./gameView";
 import { GameViewService } from "./gameViewService";
 import { LoadState } from "./loadState";
 import { Sound } from "@pixi/sound";
+import { MenuBackgroundEntity } from "./menuBackgroundEntity";
 
 export class MenuGameView implements GameView {
 
@@ -13,11 +14,7 @@ export class MenuGameView implements GameView {
 
     private _parentResource?: Container;
     private _activeWorld?: World;
-
-    private _backdrop?: Container;
-    private _sky?: Sprite;
-    private _background?: Sprite;
-    private _foreground?: Sprite;
+    private _backdrop?: MenuBackgroundEntity;
     private _questBoard?: Sprite;
     private _topright?: Container;
 
@@ -46,7 +43,10 @@ export class MenuGameView implements GameView {
             this._prevMusic = this._music;
         }
         this._musicId = audio;
-        this._music = Sound.from(`${audio}.ogg`);
+        this._music = Sound.from({
+            url: `${audio}.ogg`,
+            preload: true
+        });
         this._music.loop = true;
     }
 
@@ -105,12 +105,7 @@ export class MenuGameView implements GameView {
                 this._rootGrabbingTextures.push(texture);
             }
 
-            this._backdrop = new Container();
-
-            this._foreground = new Sprite(r.resources['menu.png'].texture);
-            this._foreground.anchor.set(0.5, 0.5);
-            this._backdrop.addChild(this._foreground);
-            this._parentResource.addChild(this._backdrop);
+            this._backdrop = new MenuBackgroundEntity(this._parentResource);
 
             this._questBoard = new Sprite(r.resources['questBoard.png'].texture);
             this._questBoard.anchor.set(0, 1);
@@ -160,7 +155,7 @@ export class MenuGameView implements GameView {
             this._topright.addChild(expl);
             this._parentResource.addChild(this._topright);
 
-            loadState.onFinished()
+            loadState.onFinished();
         };
 
         const notLoadedYet = toLoad.filter(p => p in utils.TextureCache === false);
@@ -178,7 +173,10 @@ export class MenuGameView implements GameView {
     }
 
     private grabButton(sprite: Sprite, callback: ()=>void) {
-        Sound.from(`rip.ogg`).play();
+        Sound.from({
+            url: `rip.ogg`,
+            preload: true
+        }).play();
 
         if (!this._rootGrabbingTextures) {
             throw new Error("Grabbing root textures not loaded");
@@ -219,7 +217,7 @@ export class MenuGameView implements GameView {
 
     public update(elapsedTime: number): void {
         if (this._prevMusic?.isPlaying === false) delete this._prevMusic;
-        if (!this._prevMusic && this._music?.isPlaying === false) this._music.play();
+        if (!this._prevMusic && this._music?.isPlaying === false && this._music?.isPlayable !== false) this._music.play();
 
         this._questBoard!.position.set(-window.innerWidth / 2, window.innerHeight / 2);
         this._parentResource?.position.set(window.innerWidth / 2, window.innerHeight / 2);
@@ -227,7 +225,7 @@ export class MenuGameView implements GameView {
         const sy = window.innerHeight / 1080;
         const maxS = sx > sy ? sx : sy
         const minS = sx < sy ? sx : sy
-        this._backdrop?.scale.set(maxS);
+        this._backdrop?.update(elapsedTime);
         this._questBoard?.scale.set(minS);
         if (this._topright) {
             this._topright.x = window.innerWidth / 2 - 10;
