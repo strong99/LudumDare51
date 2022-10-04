@@ -207,7 +207,7 @@ export class MenuGameView implements GameView {
 
     private onNew() {
         const world = new World(DemoWorld);
-        this._viewService.swapViewToBoard(world);
+        this._viewService.swapViewToIntro(world);
     }
 
     private onContinue() {

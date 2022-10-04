@@ -4,6 +4,7 @@ import { SaveManager } from "../io/saveManager";
 import { World } from "../model/world";
 import { BoardGameView } from "./boardGameView";
 import { GameView } from "./gameView";
+import { IntroGameView } from "./introGameView";
 import { LoadStateListener } from "./loadState";
 import { MenuBackgroundEntity } from "./menuBackgroundEntity";
 import { MenuGameView } from "./menuGameView";
@@ -89,6 +90,7 @@ export class GameViewService {
         this._pixi.stage.addChild(this._viewLayer);
         this.swapViewToMenu();
         //this.swapViewToBoard(new World(DemoWorld));
+        //this.swapViewToIntro(new World(DemoWorld));
     }
 
     /**
@@ -136,5 +138,10 @@ export class GameViewService {
     public swapViewToBoard(world?: World): void {
         world ??= new World(DemoWorld);
         this.swapView(new BoardGameView(this, this._pixi, world));
+    }
+
+    public swapViewToIntro(world?: World): void {
+        world ??= new World(DemoWorld);
+        this.swapView(new IntroGameView(this, this._pixi, world));
     }
 }
