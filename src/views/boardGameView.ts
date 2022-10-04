@@ -395,6 +395,7 @@ export class BoardGameView implements PlayGameView {
         this._music?.stop();
         delete this._music;
         delete this._prevMusic;
+        
         for (const a of this._activeSounds) {
             a.sound.stop();
         }

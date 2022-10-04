@@ -175,7 +175,11 @@ export class IntroGameView implements GameView {
     }
 
     public destroy(): void {
-        this.stopMusic();
+        this._prevMusic?.stop();
+        this._music?.stop();
+        delete this._prevMusic;
+        delete this._music;
+
         this._backdrop?.destroy();
         this._parentResource?.destroy();
         delete this._parentResource;
