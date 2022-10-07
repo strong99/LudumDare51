@@ -67,6 +67,7 @@ export class Peasant implements Entity {
 
         this._destroyed = true;
         this._model.world.offRemoveEntity(this._onRemoveEntity);
-        this._sprite?.parent.removeChild(this._sprite);
+        this._sprite?.parent?.removeChild(this._sprite);
+        this._view.stopPlaying('alarm');
     }
 }

@@ -37,7 +37,7 @@ export class Hero implements Entity {
     }
     
     public destroy(): void {
-        this._sprite?.parent.removeChild(this._sprite);
+        this._sprite?.parent?.removeChild(this._sprite);
         if (this._fighting) this._view.stopPlaying('fighting');
     }
 }

@@ -35,6 +35,12 @@ export class IntroGameView implements GameView {
     private _keySounds = new Array<Sound>();
 
     private _text?: Text;
+
+    private _nextLine = (e: UIEvent)=>{
+        this._charInterval = 0;
+        this._charIdx = 0;
+        this._lineIdx++;
+    };
     
     private _prevMusic?: Sound;
     private _music?: Sound;
@@ -112,6 +118,8 @@ export class IntroGameView implements GameView {
             this._text.anchor.set(0.5, 0.5);
             this._parentResource.addChild(this._text);
             this._parentResource.visible = true;
+
+            window.addEventListener('click', this._nextLine);
             
             loadState.onFinished();
         };
@@ -147,7 +155,11 @@ export class IntroGameView implements GameView {
             this._charInterval += charIntervalMs;
 
             const fullLine = intro[this._lineIdx];
-            if (this._charIdx === fullLine.length) { 
+            if (!fullLine) {
+                this._viewService.swapViewToBoard(this._world);
+                return;
+            }
+            else if (this._charIdx === fullLine.length) { 
                 this._charInterval += charIntervalMs * 5;
             }
 

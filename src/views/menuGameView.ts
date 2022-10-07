@@ -98,7 +98,7 @@ export class MenuGameView implements GameView {
             this._rootGrabbingTextures.length = 0;
             for(let i = 0; i < 10; ++i) {
                 const frame = `rootsGrabbing/frame000${i}.png`;
-                const texture = r.resources[frame].texture;
+                const texture = Texture.from(frame);
                 if (!texture) {
                     throw new Error("Root Grabbing animation frame texture not loaded");
                 }
@@ -107,12 +107,12 @@ export class MenuGameView implements GameView {
 
             this._backdrop = new MenuBackgroundEntity(this._parentResource);
 
-            this._questBoard = new Sprite(r.resources['questBoard.png'].texture);
+            this._questBoard = new Sprite(Texture.from('questBoard.png'));
             this._questBoard.anchor.set(0, 1);
             this._questBoard.position.set(-window.innerWidth / 2, window.innerHeight / 2);
             this._parentResource.addChild(this._questBoard);
 
-            this._startButton = new Sprite(r.resources['startButton.png'].texture);
+            this._startButton = new Sprite(Texture.from('startButton.png'));
             this._startButton.anchor.set(0.5, 0.5);
             this._startButton.position.set(153, -120);
             this._startButton.interactive = true;
@@ -123,7 +123,7 @@ export class MenuGameView implements GameView {
             this._questBoard.addChild(this._startButton);
 
             if (this._activeWorld || this._viewService.saveManager.hasQuickSave()) {
-                this._continueButton = new Sprite(r.resources['continueButton.png'].texture);
+                this._continueButton = new Sprite(Texture.from('continueButton.png'));
                 this._continueButton.anchor.set(0.5, 0.5);
                 this._continueButton.position.set(276, -116);
                 this._continueButton.interactive = true;
@@ -238,6 +238,7 @@ export class MenuGameView implements GameView {
         this._music?.stop();
         delete this._music;
         delete this._prevMusic;
+        
         this._parentResource?.parent?.removeChild(this._parentResource);
     }
 }
