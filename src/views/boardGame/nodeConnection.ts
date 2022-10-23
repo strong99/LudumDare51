@@ -1,4 +1,4 @@
-import { Graphics, Point, Sprite, Texture } from 'pixi.js';
+import { AnimatedSprite, Graphics, Point, Sprite, Texture } from 'pixi.js';
 import { Node as NodeModel } from '../../model/node';
 import { TreePlayer } from '../../model/treePlayer';
 import { BoardGameView } from '../boardGameView';
@@ -8,7 +8,6 @@ export class NodeConnection implements Entity {
     private _view: BoardGameView;
     private _model1: NodeModel;
     private _model2: NodeModel;
-    private _sprite: Graphics;
 
     public constructor(view: BoardGameView, sourceA: NodeModel, sourceB: NodeModel) {
         this._view = view;
@@ -38,19 +37,7 @@ export class NodeConnection implements Entity {
         bx += nx * xradius;
         by += ny * yradius;
 
-        this._sprite = new Graphics();
-        this._sprite.position.set(center.x, center.y);
-        this._sprite.lineStyle({ width: 4, color: 0x6666bb });
-        this._sprite.drawPolygon([
-            new Point(ax - center.x, ay - center.y),
-            new Point(bx - center.x, by - center.y),
-        ]);
-        this._sprite.alpha = 0.0;
-        this._sprite.zIndex = Math.min(this._model1.y, this._model2.y);
-
         if (!this._view.gameLayer) throw new Error();
-
-        this._view.gameLayer.addChild(this._sprite);
     }
 
     public connectsTo(sourceA: NodeModel, sourceB: NodeModel) {
@@ -60,13 +47,54 @@ export class NodeConnection implements Entity {
         );
     }
 
+    private _hasRoots = false;
+    private _roots = new Array<AnimatedSprite>();
     public update(timeElapsed: number): void {
-        this._sprite.alpha = (
-            (this._model1.construct?.player instanceof TreePlayer|| this._model2.construct?.player instanceof TreePlayer) 
-        ) ? 0.125 : 0;
+        const hasPlayer = (this._model1.construct?.player instanceof TreePlayer|| this._model2.construct?.player instanceof TreePlayer);
+        if (!this._hasRoots && hasPlayer) {
+            this._hasRoots = true;
+            const textures = new Array<Texture>();
+            for(let i = 0; i < 7; ++i) textures.push(Texture.from(`roots/frame000${i}.png`));
+
+            const m1 = this._model1.construct?.player instanceof TreePlayer ? this._model1 : this._model2;
+            const m2 = this._model1.construct?.player instanceof TreePlayer ? this._model2 : this._model1;
+            const dX = m2.x - m1.x;
+            const dY = m2.y - m1.y;
+            const l = Math.sqrt(dX * dX + dY *dY);
+            const nX = dX / l;
+            const nY = dY / l;
+
+            for(let i = 0; i <l; i += 60) {
+                const s = new AnimatedSprite(textures);
+                if (nX > 0) s.scale.set(-1, 1);
+                s.animationSpeed = 0.25;
+                s.anchor.set(0.5, 1);
+                s.loop = false;
+                s.visible = false;
+                s.position.set(
+                    nX * i + m1.x,
+                    nY * i + m1.y
+                );
+                this._view?.gameLayer?.addChild(s);
+                this._roots.push(s);
+            }
+            for(let i = 0; i < this._roots.length; i++) {
+                this._roots[i].onComplete = ()=> { 
+                    const r=  this._roots[i + 1];
+                    if (r) {
+                        r.visible = true;
+                        r.play();
+                    }
+                }
+            }
+            if (this._roots.length > 0) {
+                this._roots[0].play();
+            }
+        }
     }
 
     public destroy(): void {
-        this._sprite?.parent.removeChild(this._sprite);
+        this._roots.map(s=>s.destroy());
+        this._roots.length = 0;
     }
 }
